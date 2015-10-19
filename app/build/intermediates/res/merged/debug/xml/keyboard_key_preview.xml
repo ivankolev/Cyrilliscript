@@ -1,0 +1,5 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/white"
+    android:textColor="@android:color/black"
+    android:gravity="center"
+    android:textSize="32sp"/><!-- From: file:/home/pablo/AndroidStudioProjects/Honeywell%20Keyboard/app/src/main/res/xml/keyboard_key_preview.xml -->

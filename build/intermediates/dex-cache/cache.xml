@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-27f9815977cb863867b9c14901860f84cf3e4358.jar" />
+    </item>
+    <item
+        jar="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/classes-00ae3ad2614d622d01bde4ba9e99d77a2b414697.jar" />
+    </item>
+    <item
+        jar="/home/pablo/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-ad29fb543ef48de1e1ea6e3d90a2a1635f8f1e10.jar" />
+    </item>
+
+</items>
