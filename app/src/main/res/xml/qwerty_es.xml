@@ -29,7 +29,7 @@
         <Key android:codes="113" android:keyLabel="q" android:keyEdgeFlags="left"/>
         <Key android:codes="119" android:keyLabel="w"/>
         <Key android:codes="101" android:keyLabel="e"
-            android:popupCharacters="éë"
+            android:popupCharacters="é"
             android:popupKeyboard="@xml/keyboard_popup_template"/>
         <Key android:codes="114" android:keyLabel="r"/>
         <Key android:codes="116" android:keyLabel="t"/>
@@ -38,7 +38,7 @@
             android:popupCharacters="úü"
             android:popupKeyboard="@xml/keyboard_popup_template"/>
         <Key android:codes="105" android:keyLabel="i"
-            android:popupCharacters="íï"
+            android:popupCharacters="í"
             android:popupKeyboard="@xml/keyboard_popup_template"/>
         <Key android:codes="111" android:keyLabel="o"
             android:popupCharacters="ó"
@@ -89,7 +89,7 @@
                 android:keyWidth="10%p"/>
         <Key android:codes="32" android:keyIcon="@drawable/sym_keyboard_space" 
                 android:keyWidth="30%p" android:isRepeatable="true"/>
-        <Key android:codes="46,44" android:keyLabel=". ,"
+        <Key android:codes="46" android:keyLabel="."
                 android:keyWidth="15%p"/>
         <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return" 
                 android:keyWidth="20%p" android:keyEdgeFlags="right"/>

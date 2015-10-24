@@ -148,8 +148,6 @@ public class SoftKeyboard extends InputMethodService
     @Override public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
 
-        shiftState = SHIFT_STATE_INITIAL;
-
         // Apply the selected keyboard to the input view.
         final InputMethodSubtype subtype = mInputMethodManager.getCurrentInputMethodSubtype();
         switch(subtype.getLocale()) {
@@ -190,7 +188,11 @@ public class SoftKeyboard extends InputMethodService
         if (!restarting) {
             // Clear shift states.
             mMetaState = 0;
+
         }
+        else
+        {   shiftState=SHIFT_STATE_INITIAL;
+            handleShift();}
 
         mPredictionOn = false;
         mCompletionOn = false;
@@ -253,14 +255,14 @@ public class SoftKeyboard extends InputMethodService
                 // We also want to look at the current state of the editor
                 // to decide whether our alphabetic keyboard should start out
                 // shifted.
-                updateShiftKeyState(attribute);
+//                updateShiftKeyState(attribute);
                 break;
 
             default:
                 // For all unknown input types, default to the alphabetic
                 // keyboard with no special features.
                 setCurrentQwerty();
-                updateShiftKeyState(attribute);
+//                updateShiftKeyState(attribute);
         }
 
         // Sets the right Enter key (Go, Next, Search, Enter)
@@ -304,6 +306,7 @@ public class SoftKeyboard extends InputMethodService
         if (mInputView != null) {
             mInputView.closing();
         }
+        System.gc();
     }
     //endregion
 
@@ -524,7 +527,7 @@ public class SoftKeyboard extends InputMethodService
         }
         ic.commitText(text, 0);
         ic.endBatchEdit();
-        updateShiftKeyState(getCurrentInputEditorInfo());
+//        updateShiftKeyState(getCurrentInputEditorInfo());
     }
 
     /**
@@ -561,19 +564,19 @@ public class SoftKeyboard extends InputMethodService
      * Helper to update the shift state of our keyboard based on the initial
      * editor state.
      */
-    private void updateShiftKeyState(EditorInfo attr) {
-        if (attr != null
-                && mInputView != null
-                && mCurKeyboard == mInputView.getKeyboard())
-        {
-            int caps = 0;
-            EditorInfo ei = getCurrentInputEditorInfo();
-            if (ei != null && ei.inputType != InputType.TYPE_NULL) {
+//    private void updateShiftKeyState(EditorInfo attr) {
+//        if (attr != null
+//                && mInputView != null
+//                && mCurKeyboard == mInputView.getKeyboard())
+//        {
+//            int caps = 0;
+//            EditorInfo ei = getCurrentInputEditorInfo();
+//            if (ei != null && ei.inputType != InputType.TYPE_NULL) {
 //                caps = getCurrentInputConnection().getCursorCapsMode(attr.inputType);
-            }
+//            }
 //            mInputView.setShifted(mCapsLock || caps != 0);
-        }
-    }
+//        }
+//    }
 
     // Double tap on Shiftkey in less than 500ms is considered CapLocks
     private void checkToggleCapsLock() {
@@ -629,7 +632,7 @@ public class SoftKeyboard extends InputMethodService
                 commitTyped(getCurrentInputConnection());
             }
             sendKey(primaryCode);
-            updateShiftKeyState(getCurrentInputEditorInfo());
+//            updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (primaryCode == Keyboard.KEYCODE_DELETE) {
             handleBackspace();
         } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
@@ -695,7 +698,7 @@ public class SoftKeyboard extends InputMethodService
         if (isAlphabet(primaryCode) && mPredictionOn) {
             mComposing.append((char) primaryCode);
             getCurrentInputConnection().setComposingText(mComposing, 1);
-            updateShiftKeyState(getCurrentInputEditorInfo());
+//            updateShiftKeyState(getCurrentInputEditorInfo());
             updateCandidates();
         } else {
             getCurrentInputConnection().commitText(
@@ -718,7 +721,7 @@ public class SoftKeyboard extends InputMethodService
         } else {
             keyDownUp(KeyEvent.KEYCODE_DEL);
         }
-        updateShiftKeyState(getCurrentInputEditorInfo());
+//        updateShiftKeyState(getCurrentInputEditorInfo());
     }
 
     private void handleClose() {
@@ -766,7 +769,7 @@ public class SoftKeyboard extends InputMethodService
             if (mCandidateView != null) {
                 mCandidateView.clear();
             }
-            updateShiftKeyState(getCurrentInputEditorInfo());
+//            updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
             // text, we would commit one of them here.  But for this sample,
