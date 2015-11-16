@@ -24,6 +24,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.IBinder;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -86,6 +88,9 @@ public class SoftKeyboard extends InputMethodService
     private int shiftState;
 
     private String mWordSeparators;
+
+    private final String TAG = SoftKeyboard.class.getSimpleName();
+
 
 //    NfcAdapter adapter;
 //    PendingIntent pendingIntent;
@@ -190,13 +195,11 @@ public class SoftKeyboard extends InputMethodService
             mMetaState = 0;
 
         }
-        else
-        {   shiftState=SHIFT_STATE_INITIAL;
-            handleShift();}
 
         mPredictionOn = false;
         mCompletionOn = false;
         mCompletions = null;
+
 
         // We are now going to initialize our state based on the type of
         // text being edited.
@@ -222,6 +225,11 @@ public class SoftKeyboard extends InputMethodService
 
                 setCurrentQwerty();
                 mPredictionOn = true;
+
+                // Log Editorinfo Flags
+                final String flagsString = toFlagsString(attribute.inputType & InputType.TYPE_MASK_FLAGS);
+                Log.i(TAG, "Flags: " + flagsString);
+
 
                 // We now look for a few special variations of text that will
                 // modify our behavior.
@@ -256,6 +264,9 @@ public class SoftKeyboard extends InputMethodService
                 // to decide whether our alphabetic keyboard should start out
                 // shifted.
 //                updateShiftKeyState(attribute);
+                if(getCurrentInputConnection().getCursorCapsMode(attribute.inputType)!=0){
+                    handleShift();
+                }
                 break;
 
             default:
@@ -263,12 +274,38 @@ public class SoftKeyboard extends InputMethodService
                 // keyboard with no special features.
                 setCurrentQwerty();
 //                updateShiftKeyState(attribute);
+                if(getCurrentInputConnection().getCursorCapsMode(attribute.inputType)!=0){
+                    handleShift();
+                }
         }
 
         // Sets the right Enter key (Go, Next, Search, Enter)
         mCurKeyboard.setImeOptions(getResources(), attribute.imeOptions);
         eInfo = attribute;
     }
+
+
+    private static String toFlagsString(final int flags) {
+        final ArrayList<String> flagsArray = new ArrayList<>();
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS))
+            flagsArray.add("TYPE_TEXT_FLAG_NO_SUGGESTIONS");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_MULTI_LINE))
+            flagsArray.add("TYPE_TEXT_FLAG_MULTI_LINE");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE))
+            flagsArray.add("TYPE_TEXT_FLAG_IME_MULTI_LINE");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_CAP_WORDS))
+            flagsArray.add("TYPE_TEXT_FLAG_CAP_WORDS");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_CAP_SENTENCES))
+            flagsArray.add("TYPE_TEXT_FLAG_CAP_SENTENCES");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS))
+            flagsArray.add("TYPE_TEXT_FLAG_CAP_CHARACTERS");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_AUTO_CORRECT))
+            flagsArray.add("TYPE_TEXT_FLAG_AUTO_CORRECT");
+        if (0 != (flags & InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE))
+            flagsArray.add("TYPE_TEXT_FLAG_AUTO_COMPLETE");
+        return flagsArray.isEmpty() ? "" : Arrays.toString(flagsArray.toArray());
+    }
+
 
     /**
      * Called by the framework when your view for showing candidates needs to
@@ -290,7 +327,6 @@ public class SoftKeyboard extends InputMethodService
     @Override public void onFinishInput() {
         super.onFinishInput();
 
-        shiftState = SHIFT_STATE_INITIAL;
 
         // Clear current composing text and candidates.
         mComposing.setLength(0);
@@ -307,6 +343,8 @@ public class SoftKeyboard extends InputMethodService
             mInputView.closing();
         }
         System.gc();
+
+        shiftState = SHIFT_STATE_INITIAL;
     }
     //endregion
 
@@ -598,17 +636,17 @@ public class SoftKeyboard extends InputMethodService
         if (mCurKeyboard == currentKeyboard) {
 
             if (shiftState == SHIFT_STATE_INITIAL) {
-                mInputView.setShifted(true);
+                mCurKeyboard.setShifted(true);
                 shiftState = SHIFT_STATE_INTERMEDIATE;
                 ((LatinKeyboard) mInputView.getKeyboard()).setShiftIconToSticky(true);  //Green Arrow
                 mCurKeyboard.mShiftKey.on=false;                                        // LED Off
             } else if (shiftState == SHIFT_STATE_INTERMEDIATE) {
-                mInputView.setShifted(true);
+                mCurKeyboard.setShifted(true);
                 shiftState = SHIFT_STATE_FINAL;
                 ((LatinKeyboard) mInputView.getKeyboard()).setShiftIconToSticky(true);  //Green Arrow
                 mCurKeyboard.mShiftKey.on=true;                                         // LED On
             } else if (shiftState == SHIFT_STATE_FINAL) {
-                mInputView.setShifted(false);
+                mCurKeyboard.setShifted(false);
                 shiftState = SHIFT_STATE_INITIAL;
                 ((LatinKeyboard) mInputView.getKeyboard()).setShiftIconToSticky(false); // Black Arrow
                 mCurKeyboard.mShiftKey.on=false;                                        // LED Off
@@ -620,6 +658,8 @@ public class SoftKeyboard extends InputMethodService
             setLatinKeyboard(mSymbolsKeyboard);
             mSymbolsKeyboard.setShifted(false);
         }
+
+
     }
 //endregion
 
