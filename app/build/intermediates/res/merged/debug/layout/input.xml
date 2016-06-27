@@ -18,7 +18,7 @@
 */
 -->
 
-<com.example.android.softkeyboard.LatinKeyboardView
+<com.phaseshiftlab.cyrilliscript.LatinKeyboardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/keyboard"
     android:layout_alignParentBottom="true"
@@ -27,4 +27,3 @@
     android:keyPreviewHeight="50dp"
     android:keyPreviewLayout="@xml/keyboard_key_preview"
     />
-<!-- From: file:/home/pablo/AndroidStudioProjects/Honeywell%20Keyboard/app/src/main/res/layout/input.xml -->

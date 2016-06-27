@@ -2,25 +2,49 @@
 <items version="2" >
 
     <item
-        jar="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
-        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-27f9815977cb863867b9c14901860f84cf3e4358.jar" />
+        is-multidex="false"
+        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="false"
+        revision="24.0.0"
+        sha1="a0bc052d14f976a4816f3d570e6299dda383c7c7">
+        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_7f76d47c3e875bf895c4716d738d08dcf48dd5d6.jar" />
     </item>
     <item
-        jar="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
-        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/classes-00ae3ad2614d622d01bde4ba9e99d77a2b414697.jar" />
+        is-multidex="false"
+        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.0.0\jars\libs\internal_impl-24.0.0.jar"
+        jumboMode="true"
+        optimize="false"
+        revision="24.0.0"
+        sha1="fcaf463e10e69c1923ccf1edeba3b4196d239e00">
+        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\internal_impl-24.0.0_c9826aefbb577e6c1311b8aa3c0bb30a35be64d9.jar" />
     </item>
     <item
-        jar="/home/pablo/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
-        <dex dex="/home/pablo/AndroidStudioProjects/Honeywell Keyboard/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-ad29fb543ef48de1e1ea6e3d90a2a1635f8f1e10.jar" />
+        is-multidex="false"
+        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="false"
+        revision="24.0.0"
+        sha1="b85fb48a987511a558156ad8e255f2ade398e792">
+        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\instant-run_feebd091e0ec4636e4f1437fe34c8d122eb50ef3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="false"
+        revision="24.0.0"
+        sha1="2f7e6e2dad1bccaf68a8820820adc6c0d5b96d37">
+        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-24.0.0_c1011cd6c68ac31c89438efecdd5d3c856582ee2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\24.0.0\support-annotations-24.0.0.jar"
+        jumboMode="true"
+        optimize="false"
+        revision="24.0.0"
+        sha1="2943c74db6d4346ab8c6531adac91fa05c137c40">
+        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\support-annotations-24.0.0_ec2fc24f29fe7b8430d8e8c51c03a99d172b0106.jar" />
     </item>
 
 </items>

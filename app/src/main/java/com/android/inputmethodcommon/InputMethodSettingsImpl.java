@@ -54,7 +54,7 @@ import java.util.List;
      * @param prefScreen a PreferenceScreen of PreferenceActivity or PreferenceFragment.
      * @return true if this application is an IME and has two or more subtypes, false otherwise.
      */
-    public boolean init(final Context context, final PreferenceScreen prefScreen) {
+    boolean init(final Context context, final PreferenceScreen prefScreen) {
         mContext = context;
         mImm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         mImi = getMyImi(context, mImm);
@@ -177,7 +177,7 @@ import java.util.List;
         }
     }
 
-    public void updateSubtypeEnabler() {
+    void updateSubtypeEnabler() {
         if (mSubtypeEnablerPreference != null) {
             if (mSubtypeEnablerTitleRes != 0) {
                 mSubtypeEnablerPreference.setTitle(mSubtypeEnablerTitleRes);

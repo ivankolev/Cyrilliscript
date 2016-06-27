@@ -73,7 +73,7 @@
         <Key android:codes="-2" android:keyLabel="ABC" android:keyWidth="10%p" />
         <!--
             android:codes: -101 is not a framework-defined key code but a key code that is
-            privately defined in com.example.android.softkeyboard.LatinKeyboardView.
+            privately defined in com.phaseshiftlab.cyrilliscript.LatinKeyboardView.
         -->
         <Key android:codes="-101" android:keyIcon="@drawable/sym_keyboard_language_switch"
                 android:keyWidth="10%p" />
@@ -84,4 +84,3 @@
                 android:keyWidth="20%p" android:keyEdgeFlags="right" />
     </Row>
 </Keyboard>
-<!-- From: file:/home/pablo/AndroidStudioProjects/Honeywell%20Keyboard/app/src/main/res/xml/symbols_shift.xml -->

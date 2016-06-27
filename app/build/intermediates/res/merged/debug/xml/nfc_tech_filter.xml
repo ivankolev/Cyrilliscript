@@ -16,4 +16,4 @@
         <tech>android.nfc.tech.MifareClassic</tech>
         <tech>android.nfc.tech.MifareUltralight</tech>
     </tech-list>
-</resources><!-- From: file:/home/pablo/AndroidStudioProjects/Honeywell%20Keyboard/app/src/main/res/xml/nfc_tech_filter.xml -->
+</resources>

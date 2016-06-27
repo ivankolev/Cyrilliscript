@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.softkeyboard.test">
+    package="com.phaseshiftlab.cyrilliscript.test">
 
     <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 
@@ -9,8 +9,8 @@
     </application>
 
     <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="com.example.android.softkeyboard"
+                     android:targetPackage="com.phaseshiftlab.cyrilliscript"
                      android:handleProfiling="false"
                      android:functionalTest="false"
-                     android:label="Tests for com.example.android.softkeyboard"/>
+                     android:label="Tests for com.phaseshiftlab.cyrilliscript"/>
 </manifest>
