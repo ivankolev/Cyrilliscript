@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class SoftKeyboard extends InputMethodService 
         implements KeyboardView.OnKeyboardActionListener {
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
     
     /**
      * This boolean indicates the optional example code for performing
@@ -63,6 +63,8 @@ public class SoftKeyboard extends InputMethodService
     private InputMethodManager mInputMethodManager;
 
     private LatinKeyboardView mInputView;
+    private MainWritingView mDrawingInputView;
+
     private CandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
     
@@ -80,7 +82,7 @@ public class SoftKeyboard extends InputMethodService
     private LatinKeyboard mQwertyKeyboard_es;
     private LatinKeyboard mCurKeyboard;
 
-    public EditorInfo eInfo;                        // Editor Global info
+    public EditorInfo eInfo;
 
     private static final int SHIFT_STATE_INITIAL = 1;
     private static final int SHIFT_STATE_INTERMEDIATE = 2;
@@ -90,13 +92,6 @@ public class SoftKeyboard extends InputMethodService
     private String mWordSeparators;
 
     private final String TAG = SoftKeyboard.class.getSimpleName();
-
-
-//    NfcAdapter adapter;
-//    PendingIntent pendingIntent;
-//    IntentFilter writeTagFilters[];
-//    Tag myTag;
-//    Context context;
 
     //region Initialization methods
 
@@ -143,11 +138,14 @@ public class SoftKeyboard extends InputMethodService
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
 
+        mDrawingInputView = (MainWritingView) getLayoutInflater().inflate(R.layout.main_writing_view, null);
+
         setCurrentQwerty();
         setLatinKeyboard(mCurKeyboard);
 
 
-        return mInputView;
+        //return mInputView;
+        return mDrawingInputView;
     }
 
     @Override public void onStartInputView(EditorInfo attribute, boolean restarting) {
