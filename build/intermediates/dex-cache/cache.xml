@@ -2,49 +2,238 @@
 <items version="2" >
 
     <item
-        is-multidex="false"
-        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.2\2bf96b7aa8b611c177d329452af1dc933e14501c\commons-cli-1.2.jar"
         jumboMode="true"
-        optimize="false"
+        optimize="true"
         revision="24.0.0"
-        sha1="a0bc052d14f976a4816f3d570e6299dda383c7c7">
-        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_7f76d47c3e875bf895c4716d738d08dcf48dd5d6.jar" />
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\commons-cli-1.2_6a6fd32e8eda4cc3436be7d14633d0f2c5b85344\classes.dex" />
     </item>
     <item
-        is-multidex="false"
-        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.0.0\jars\libs\internal_impl-24.0.0.jar"
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.0\jars\classes.jar"
         jumboMode="true"
-        optimize="false"
-        revision="24.0.0"
-        sha1="fcaf463e10e69c1923ccf1edeba3b4196d239e00">
-        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\internal_impl-24.0.0_c9826aefbb577e6c1311b8aa3c0bb30a35be64d9.jar" />
+        optimize="true"
+        revision="24.0.2"
+        sha1="c3c638be6e650b165ab9ae144857b64e82787fad">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-24.2.0_e72c55a8a971beac68854285caec08a3ed52ca32\classes.dex" />
     </item>
     <item
-        is-multidex="false"
-        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
-        optimize="false"
+        optimize="true"
         revision="24.0.0"
-        sha1="b85fb48a987511a558156ad8e255f2ade398e792">
-        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\instant-run_feebd091e0ec4636e4f1437fe34c8d122eb50ef3.jar" />
+        sha1="398a20de5e71be89859495bf71b32ccf901edf8b">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_658b88e7371db5ccc2d9dd5af585a625917682a5\classes.dex" />
     </item>
     <item
-        is-multidex="false"
-        jar="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.0.0\jars\classes.jar"
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\com.facebook.stetho\stetho\1.3.1\2c4076b466a0eb4d6ddf5721edd35cd1adc1f317\stetho-1.3.1.jar"
         jumboMode="true"
-        optimize="false"
+        optimize="true"
         revision="24.0.0"
-        sha1="2f7e6e2dad1bccaf68a8820820adc6c0d5b96d37">
-        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-24.0.0_c1011cd6c68ac31c89438efecdd5d3c856582ee2.jar" />
+        sha1="2c4076b466a0eb4d6ddf5721edd35cd1adc1f317">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\stetho-1.3.1_47903b22ee9cb39ca6723092a852d7d09b3ccff6\classes.dex" />
     </item>
     <item
-        is-multidex="false"
-        jar="F:\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\24.0.0\support-annotations-24.0.0.jar"
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\classes.jar"
         jumboMode="true"
-        optimize="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="e7f3132168957eefc46229fc32c3bd464642b71e">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-24.2.1_3ed76e6a954c3f9da3903a6686e7aec439c4c3d6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="b9a1ac78ad7ef3abedc4a4b30cd92bcacb939d1f">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-24.2.1_f4cbd9cc3b3a7dfd415e4f1d2479588bea7fb578\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-media-compat-24.2.1_bc16955b68f48d8f4c50593d1e44a20c5a64486c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="4ed65e0905e37f7e6808521055cae72f0db43846">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_7d227893b3dd3cf3be53e53a3cb411f764bb1800\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="5f64d657e838e8375135c0f6057a7ff8fab6a50e">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_7049c694cb267692fea17ba2f80fccbf5e0f47ff\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-24.2.1_3f632b4a0765f2840cb165a310d8627cf66ce81c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-compat-24.2.1_63bfe5acfb472b06a37b138e391e15b22c01af2e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.rmtheis\tess-two\6.0.4\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="27377d2be96cab8211f228b424f221f34a0fa5bc">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.rmtheis-tess-two-6.0.4_8e8d81f9274df537f30b11d53de85befe5ae6433\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="7e4389bd133359a2ff88623ff1e4ff93d6e6f780">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_df76f585f8c9704623634b4c0e61aa5f5390c705\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="867dad63c33388ff8c7644b236579355036d075f">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_398716e3e2e688ef717cfdb15750e30f36d869f5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-utils-24.2.1_eb58d9978a739e405d5de08680f5182040c9d992\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
         revision="24.0.0"
-        sha1="2943c74db6d4346ab8c6531adac91fa05c137c40">
-        <dex dex="C:\Users\phaseshiftlab\workspace\nanodegree\Cyrilliscript\app\build\intermediates\pre-dexed\debug\support-annotations-24.0.0_ec2fc24f29fe7b8430d8e8c51c03a99d172b0106.jar" />
+        sha1="a268153db4747331c859033505cc75be42dd8b01">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_7d227893b3dd3cf3be53e53a3cb411f764bb1800\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\2.0.1\516c03b21d50a644d538de0f0369c620989cd8f0\jsr305-2.0.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.0"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\jsr305-2.0.1_8a6265fd7a94ea995016a3f8b1eb8017669616dd\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\24.2.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="f3ee23ef25c9a8fe3d40246d0b7097267963a612">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-24.2.0_66e9621c699f0dcdcc86a7583b922f5b24ec0972\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="beac40bcc8a320a896dd15f5109cfcaea5e1e0e3">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-24.2.0_11b3b9f93487e45810385fa010e649274b0e0369\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.2\2bf96b7aa8b611c177d329452af1dc933e14501c\commons-cli-1.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\commons-cli-1.2_6a6fd32e8eda4cc3436be7d14633d0f2c5b85344\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="398a20de5e71be89859495bf71b32ccf901edf8b">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_658b88e7371db5ccc2d9dd5af585a625917682a5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_699daa3b7af640c38df4eb752cfa8abcf4349e1b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="935a969265b2a166b2d20415423f5f6e90fe16e0">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_43a56f4d20573b00cee3eb0dc4cbaca24910907d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\AppData\Local\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\24.2.1\support-annotations-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="8de3aafecbdf98a61db6427f008f2d515bcd2544">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-24.2.1_de1d6bc50603cba6e63a0a4cfb3c9c0d214253e1\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\2.0.1\516c03b21d50a644d538de0f0369c620989cd8f0\jsr305-2.0.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\jsr305-2.0.1_8a6265fd7a94ea995016a3f8b1eb8017669616dd\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Phaseshifter\.gradle\caches\modules-2\files-2.1\com.facebook.stetho\stetho\1.3.1\2c4076b466a0eb4d6ddf5721edd35cd1adc1f317\stetho-1.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="2c4076b466a0eb4d6ddf5721edd35cd1adc1f317">
+        <dex dex="C:\Users\Phaseshifter\IdeaProjects\Cyrilliscript\app\build\intermediates\transforms\dex\debug\folders\1000\10\stetho-1.3.1_47903b22ee9cb39ca6723092a852d7d09b3ccff6\classes.dex" />
     </item>
 
 </items>

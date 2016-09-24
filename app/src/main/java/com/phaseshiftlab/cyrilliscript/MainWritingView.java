@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.phaseshiftlab.ocrlib.OcrService;
+
 /**
  * TODO: document your custom view class.
  */
@@ -34,9 +36,12 @@ public class MainWritingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
+    private OcrService ocrService;
+
 
     public MainWritingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        ocrService = new OcrService();
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -74,6 +79,8 @@ public class MainWritingView extends View {
         super.onDraw(canvas);
         canvas.drawBitmap(canvasBitmap, 0 , 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+        Log.d("Cyrilliscript", "draw finished");
+        Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
     }
 
     @Override
