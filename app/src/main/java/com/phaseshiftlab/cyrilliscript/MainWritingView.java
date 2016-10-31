@@ -1,11 +1,16 @@
 package com.phaseshiftlab.cyrilliscript;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Environment;
+import android.os.IBinder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,10 +18,21 @@ import android.view.View;
 
 import com.phaseshiftlab.ocrlib.OcrService;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * TODO: document your custom view class.
  */
 public class MainWritingView extends View {
+
+    private static final String TAG = "Cyrilliscript";
+    public static final String DATA_PATH = Environment
+            .getExternalStorageDirectory().toString() + "/TesseractOCR/";
+    public static final String lang = "bul";
 
     private Path drawPath;
 
@@ -37,11 +53,26 @@ public class MainWritingView extends View {
     private Bitmap canvasBitmap;
 
     private OcrService ocrService;
+    boolean isBound = false;
 
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            OcrService.MyBinder binder = (OcrService.MyBinder) service;
+            ocrService = binder.getService();
+            isBound = true;
+        }
 
-    public MainWritingView(Context context, AttributeSet attrs) {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            ocrService = null;
+            isBound = false;
+        }
+    };
+
+    public MainWritingView(Context context, AttributeSet attrs) throws InterruptedException {
         super(context, attrs);
-        ocrService = new OcrService();
+        bindToService(context);
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -52,6 +83,11 @@ public class MainWritingView extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+    }
+
+    private void bindToService(Context context) {
+        Intent intent = new Intent(this.getContext(), OcrService.class);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public MainWritingView(Context context, AttributeSet attrs, int defStyle) {

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OCR LIB</string>
+    <string name="notify_perm_title">Allow write to SD Card?</string>
+    <string name="notify_perm_body">In order to recognize characters, Cyrilliscript needs to use\n a trained data file. Allow saving it to SD Card?</string>
 </resources>

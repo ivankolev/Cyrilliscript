@@ -100,6 +100,7 @@ public class SoftKeyboard extends InputMethodService
      * to super class.
      */
     @Override public void onCreate() {
+        getAssets();
         super.onCreate();
         mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
