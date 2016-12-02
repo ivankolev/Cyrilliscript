@@ -35,6 +35,8 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
+import com.facebook.stetho.Stetho;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,6 +94,7 @@ public class SoftKeyboard extends InputMethodService
     private String mWordSeparators;
 
     private final String TAG = SoftKeyboard.class.getSimpleName();
+    private MainView mMainView;
 
     //region Initialization methods
 
@@ -102,6 +105,7 @@ public class SoftKeyboard extends InputMethodService
     @Override public void onCreate() {
         getAssets();
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
         mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
     }
@@ -139,14 +143,14 @@ public class SoftKeyboard extends InputMethodService
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
 
-        mDrawingInputView = (MainWritingView) getLayoutInflater().inflate(R.layout.main_writing_view, null);
-
+        mMainView = (MainView) getLayoutInflater().inflate(R.layout.main_view, null);
+        mDrawingInputView = (MainWritingView) mMainView.findViewById(R.id.drawing_input_view);
         setCurrentQwerty();
         setLatinKeyboard(mCurKeyboard);
 
 
         //return mInputView;
-        return mDrawingInputView;
+        return mMainView;
     }
 
     @Override public void onStartInputView(EditorInfo attribute, boolean restarting) {

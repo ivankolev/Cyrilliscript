@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -104,7 +105,7 @@ public class MainWritingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         //create Bitmap of certain w,h
-        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        canvasBitmap = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
 
         //apply bitmap to graphic to start drawing.
         drawCanvas = new Canvas(canvasBitmap);

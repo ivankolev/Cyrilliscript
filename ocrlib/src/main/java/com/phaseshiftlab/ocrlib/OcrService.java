@@ -51,7 +51,7 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
         }
     }
 
-    private void prepareTrainedDataFiles() {
+    private void prepareTrainedDataFiles() throws InterruptedException {
         String[] paths = new String[]{DATA_PATH, DATA_PATH + "/tessdata"};
 
         for (String path : paths) {
@@ -68,7 +68,8 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
 
         if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
             try {
-                InputStream in = assetManager.open("tessdata/" + lang + ".traineddata");
+                Log.v(TAG, "Opening .traineddata asset");
+                InputStream in = context.getAssets().open("tessdata/" + lang + ".traineddata");
                 OutputStream out = new FileOutputStream(new File(DATA_PATH + "tessdata/", lang + ".traineddata"));
 
                 byte[] buf = new byte[1024];
@@ -119,7 +120,11 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
             if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && (grantResults[i] == PackageManager.PERMISSION_GRANTED))
                 isGranted = true;
         if (isGranted) {
-            prepareTrainedDataFiles();
+            try {
+                prepareTrainedDataFiles();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             initTesseractAPI();
         } else {
             Log.d(TAG, "WRITE_EXTERNAL_STORAGE permission not granted.");

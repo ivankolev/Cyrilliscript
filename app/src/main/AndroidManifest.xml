@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.phaseshiftlab.cyrilliscript" >
+    package="com.phaseshiftlab.cyrilliscript">
 
-    <application android:label="@string/ime_name" >
+    <application android:label="@string/ime_name"
+        android:theme="@android:style/Theme.NoTitleBar">
         <service
             android:name=".SoftKeyboard"
-            android:permission="android.permission.BIND_INPUT_METHOD" >
+            android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
@@ -17,20 +18,9 @@
 
         <activity
             android:name=".ImePreferences"
-            android:label="@string/settings_name" >
+            android:label="@string/settings_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".TransparentActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.Transparent"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_transparent">
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

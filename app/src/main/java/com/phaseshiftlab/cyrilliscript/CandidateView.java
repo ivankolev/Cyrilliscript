@@ -67,7 +67,6 @@ class CandidateView extends View {
     /**
      * Construct a CandidateView for showing suggested words for completion.
      * @param context
-     * @param attrs
      */
     public CandidateView(Context context) {
         super(context);
@@ -154,9 +153,9 @@ class CandidateView extends View {
      * candidate.
      */
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (canvas != null) {
-            super.onDraw(canvas);
+            super.draw(canvas);
         }
         mTotalWidth = 0;
         if (mSuggestions == null) return;
@@ -246,7 +245,7 @@ class CandidateView extends View {
         scrollTo(0, 0);
         mTargetScrollX = 0;
         // Compute the total width
-        onDraw(null);
+        draw(null);
         invalidate();
         requestLayout();
     }
@@ -307,7 +306,7 @@ class CandidateView extends View {
     public void takeSuggestionAt(float x) {
         mTouchX = (int) x;
         // To detect candidate
-        onDraw(null);
+        draw(null);
         if (mSelectedIndex >= 0) {
             mService.pickSuggestionManually(mSelectedIndex);
         }

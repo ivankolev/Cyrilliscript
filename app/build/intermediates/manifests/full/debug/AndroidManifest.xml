@@ -4,7 +4,7 @@
 
     <uses-sdk
         android:minSdkVersion="19"
-        android:targetSdkVersion="24" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,7 +12,8 @@
     <application
         android:allowBackup="true"
         android:label="@string/ime_name"
-        android:supportsRtl="true" >
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.NoTitleBar" >
         <service
             android:name="com.phaseshiftlab.cyrilliscript.SoftKeyboard"
             android:permission="android.permission.BIND_INPUT_METHOD" >
@@ -30,18 +31,6 @@
             android:label="@string/settings_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.phaseshiftlab.cyrilliscript.TransparentActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_transparent"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.Transparent" >
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 

@@ -1,0 +1,28 @@
+<com.phaseshiftlab.cyrilliscript.MainView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:background="#ccc"
+    app:exampleColor="#33b5e5"
+    android:layout_alignParentBottom="true"
+    app:exampleDimension="24sp"
+    app:exampleDrawable="@android:drawable/ic_menu_add"
+    app:exampleString="Hello, MainView">
+    <Button
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:text="Text"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:id="@+id/button" />
+    <com.phaseshiftlab.cyrilliscript.MainWritingView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="#aaa"
+        android:layout_width="368dp"
+        android:layout_height="200dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:id="@+id/drawing_input_view"
+        tools:layout_editor_absoluteY="48dp">
+    </com.phaseshiftlab.cyrilliscript.MainWritingView>
+    </com.phaseshiftlab.cyrilliscript.MainView>
