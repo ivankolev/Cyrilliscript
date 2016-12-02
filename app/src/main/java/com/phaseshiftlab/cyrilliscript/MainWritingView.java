@@ -31,8 +31,7 @@ import java.io.OutputStream;
 public class MainWritingView extends View {
 
     private static final String TAG = "Cyrilliscript";
-    public static final String DATA_PATH = Environment
-            .getExternalStorageDirectory().toString() + "/TesseractOCR/";
+    public static String DATA_PATH = null;
     public static final String lang = "bul";
 
     private Path drawPath;
@@ -73,7 +72,11 @@ public class MainWritingView extends View {
 
     public MainWritingView(Context context, AttributeSet attrs) throws InterruptedException {
         super(context, attrs);
-        bindToService(context);
+        if(!this.isInEditMode()) {
+            DATA_PATH = Environment
+                    .getExternalStorageDirectory().toString() + "/TesseractOCR/";
+            bindToService(context);
+        }
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -117,7 +120,9 @@ public class MainWritingView extends View {
         canvas.drawBitmap(canvasBitmap, 0 , 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
         Log.d("Cyrilliscript", "draw finished");
-        Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
+        if(!this.isInEditMode()) {
+            Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
+        }
     }
 
     @Override
