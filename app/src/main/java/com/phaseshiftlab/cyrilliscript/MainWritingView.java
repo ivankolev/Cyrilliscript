@@ -108,7 +108,7 @@ public class MainWritingView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         //create Bitmap of certain w,h
-        canvasBitmap = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
+        canvasBitmap = Bitmap.createBitmap(400, 800, Bitmap.Config.ARGB_8888);
 
         //apply bitmap to graphic to start drawing.
         drawCanvas = new Canvas(canvasBitmap);
