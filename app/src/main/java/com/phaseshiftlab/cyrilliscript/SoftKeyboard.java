@@ -936,4 +936,10 @@ public class SoftKeyboard extends InputMethodService
         }
         return super.onStartCommand(intent, flags, startId);
     }
+
+
+
+    public void clearDrawingCanvas(View view) {
+        Log.d("Cyrillscipt", "Clear Drawing called");
+    }
 }

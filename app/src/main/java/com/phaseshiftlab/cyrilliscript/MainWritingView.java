@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 
 import com.phaseshiftlab.ocrlib.OcrService;
 
@@ -43,7 +45,7 @@ public class MainWritingView extends View {
     private Paint drawPaint;
 
     //initial color
-    private int paintColor = 0xFF660000;
+    private int paintColor = 0xFF263238;
 
     //canvas - holding pen, holds your drawings
     //and transfers them to the view
@@ -77,16 +79,32 @@ public class MainWritingView extends View {
                     .getExternalStorageDirectory().toString() + "/TesseractOCR/";
             bindToService(context);
         }
+
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(2);
+        drawPaint.setStrokeWidth(6);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
+        drawPaint.setPathEffect(new CornerPathEffect(50) );
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+    }
+
+    @Override
+    public void onFinishInflate() {
+        super.onFinishInflate();
+//        parentView = (MainView) this.getParent();
+//
+//        final Button button = (Button) parentView.findViewById(R.id.clear);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                invalidate();
+//                // Perform action on click
+//            }
+//        });
     }
 
     private void bindToService(Context context) {
@@ -122,6 +140,9 @@ public class MainWritingView extends View {
         Log.d("Cyrilliscript", "draw finished");
         if(!this.isInEditMode()) {
             Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
+            //invalidate();
+            Log.d("Cyrilliscript", "invalidated");
+
         }
     }
 
@@ -142,6 +163,8 @@ public class MainWritingView extends View {
                 drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
+                //canvasBitmap.eraseColor(paintColor);
+                Log.d("Cyrilliscript", "MotionEvent.ACTION_UP");
                 break;
             default:
                 return false;
