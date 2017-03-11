@@ -8,4 +8,11 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <style name="MainViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">300dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:background">#bdbdbd</item>
+    </style>
 </resources>

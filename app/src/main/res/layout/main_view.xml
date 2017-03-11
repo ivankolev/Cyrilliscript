@@ -1,14 +1,11 @@
 <com.phaseshiftlab.cyrilliscript.MainView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:layout_alignParentBottom="true"
-    android:background="#bdbdbd"
     app:exampleColor="#33b5e5"
     app:exampleDimension="24sp"
     app:exampleDrawable="@android:drawable/ic_menu_add"
-    app:exampleString="Hello, MainView">
+    app:exampleString="Hello, MainView"
+    style="@style/MainViewStyle">
 
     <Button
         android:id="@+id/clear"
@@ -28,7 +25,7 @@
         android:id="@+id/drawing_input_view"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:background="#f5f5f5"
+        android:background="@color/main_writing_view_bg"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

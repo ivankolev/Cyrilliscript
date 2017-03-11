@@ -36,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
+import com.phaseshiftlab.cyrilliscript.events.RxBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +96,8 @@ public class SoftKeyboard extends InputMethodService
 
     private final String TAG = SoftKeyboard.class.getSimpleName();
     private MainView mMainView;
+
+    private RxBus rxBus = RxBus.getInstance();
 
     //region Initialization methods
 
@@ -941,5 +944,6 @@ public class SoftKeyboard extends InputMethodService
 
     public void clearDrawingCanvas(View view) {
         Log.d("Cyrillscipt", "Clear Drawing called");
+        rxBus.post("CLEAR");
     }
 }

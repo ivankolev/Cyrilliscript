@@ -23,6 +23,6 @@
     <color name="candidate_other">#ff808080</color>
     <color name="candidate_background">#bbffffff</color>
     <color name="transparent">#00000000</color>
-
+    <color name="main_writing_view_bg">#f5f5f5</color>
     <color name="black_overlay">#66000000</color>
 </resources>

@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import com.phaseshiftlab.cyrilliscript.events.RxBus;
 import com.phaseshiftlab.ocrlib.OcrService;
 
 import java.io.File;
@@ -26,6 +27,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
  * TODO: document your custom view class.
@@ -57,6 +61,8 @@ public class MainWritingView extends View {
     private OcrService ocrService;
     boolean isBound = false;
 
+    private RxBus rxBus = RxBus.getInstance();
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -79,6 +85,12 @@ public class MainWritingView extends View {
                     .getExternalStorageDirectory().toString() + "/TesseractOCR/";
             bindToService(context);
         }
+
+        rxBus.receive(String.class, s -> {
+            if(s.equals("CLEAR")) {
+                canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
+            }
+        });
 
         drawPath = new Path();
         drawPaint = new Paint();
@@ -137,13 +149,6 @@ public class MainWritingView extends View {
         super.onDraw(canvas);
         canvas.drawBitmap(canvasBitmap, 0 , 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-        Log.d("Cyrilliscript", "draw finished");
-        if(!this.isInEditMode()) {
-            Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
-            //invalidate();
-            Log.d("Cyrilliscript", "invalidated");
-
-        }
     }
 
     @Override
@@ -163,8 +168,10 @@ public class MainWritingView extends View {
                 drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
-                //canvasBitmap.eraseColor(paintColor);
                 Log.d("Cyrilliscript", "MotionEvent.ACTION_UP");
+                if(!this.isInEditMode()) {
+                    Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
+                }
                 break;
             default:
                 return false;
