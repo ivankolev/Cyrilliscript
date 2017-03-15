@@ -110,7 +110,8 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
     }
 
     public String requestOCR(Bitmap bitmap) {
-        return "Width:" + bitmap.getWidth() + " Height:" + bitmap.getHeight();
+        baseAPI.setImage(bitmap);
+        return baseAPI.getUTF8Text();
     }
 
     @Override
