@@ -27,9 +27,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 
 /**
  * TODO: document your custom view class.
@@ -88,6 +92,14 @@ public class MainWritingView extends View {
 
         rxBus.receive(String.class, s -> {
             if(s.equals("CLEAR")) {
+                canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
+            }
+        });
+
+        rxBus.receive(Map.class, s -> {
+            String clearEvent = (String) s.get("CLEAR");
+            Log.d("Cyrilliscript", "CLEAR received " + clearEvent);
+            if(clearEvent != null && Objects.equals(clearEvent, "true")) {
                 canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
             }
         });
@@ -170,7 +182,11 @@ public class MainWritingView extends View {
                 drawPath.reset();
                 Log.d("Cyrilliscript", "MotionEvent.ACTION_UP");
                 if(!this.isInEditMode()) {
-                    Log.d("Cyrilliscript", ocrService.requestOCR(canvasBitmap));
+                    String recognized = ocrService.requestOCR(canvasBitmap);
+                    Log.d("Cyrilliscript", recognized);
+                    Map<String, String> recognizedMap = new HashMap<>();
+                    recognizedMap.put("RECOGNIZED", recognized);
+                    rxBus.post(recognizedMap);
                 }
                 break;
             default:

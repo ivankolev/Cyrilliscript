@@ -40,7 +40,9 @@ import com.phaseshiftlab.cyrilliscript.events.RxBus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -107,11 +109,6 @@ public class SoftKeyboard extends InputMethodService
      */
     @Override
     public void onCreate() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         getAssets();
         super.onCreate();
         Stetho.initializeWithDefaults(this);
@@ -139,6 +136,15 @@ public class SoftKeyboard extends InputMethodService
         mQwertyKeyboard_en = new LatinKeyboard(this, R.xml.qwerty_en);
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
+
+        rxBus.receive(Map.class, s -> {
+            String recognized = (String) s.get("RECOGNIZED");
+            Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
+            if(recognized != null) {
+                mComposing.append(recognized);
+                updateCandidates();
+            }
+        });
 
     }
 
@@ -290,7 +296,8 @@ public class SoftKeyboard extends InputMethodService
                 // keyboard with no special features.
                 setCurrentQwerty();
 //                updateShiftKeyState(attribute);
-                if (getCurrentInputConnection().getCursorCapsMode(attribute.inputType) != 0) {
+                InputConnection ic = getCurrentInputConnection();
+                if (ic != null && ic.getCursorCapsMode(attribute.inputType) != 0) {
                     handleShift();
                 }
         }
@@ -331,7 +338,12 @@ public class SoftKeyboard extends InputMethodService
     public View onCreateCandidatesView() {
         mCandidateView = new CandidateView(this);
         mCandidateView.setService(this);
+
+        setCandidatesViewShown(true);
+
         return mCandidateView;
+
+
     }
 
     //endregion
@@ -958,10 +970,21 @@ public class SoftKeyboard extends InputMethodService
         return super.onStartCommand(intent, flags, startId);
     }
 
-
-
     public void clearDrawingCanvas(View view) {
-        Log.d("Cyrillscipt", "Clear Drawing called");
-        rxBus.post("CLEAR");
+        Log.d("Cyrilliscript", "Clear Drawing called");
+        Map<String, String> eventMap = new HashMap<>();
+        eventMap.put("CLEAR", "true");
+        rxBus.post(eventMap);
+    }
+
+    public void sendBackspace(View view) {
+        Log.d("Cyrilliscript", "backspace called");
+        handleBackspace();
+    }
+
+    public void sendEnter(View view) {
+        Log.d("Cyrilliscript", "enter called");
+        getCurrentInputConnection().sendKeyEvent(
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
     }
 }
