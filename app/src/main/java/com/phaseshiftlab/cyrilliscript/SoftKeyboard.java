@@ -981,6 +981,20 @@ public class SoftKeyboard extends InputMethodService
         rxBus.post(eventMap);
     }
 
+    public void deleteLastPath(View view) {
+        Log.d("Cyrilliscript", "Clear Drawing called");
+        Map<String, String> eventMap = new HashMap<>();
+        eventMap.put("DELETE_LAST_PATH", "true");
+        rxBus.post(eventMap);
+    }
+
+    public void restoreLastPath(View view) {
+        Log.d("Cyrilliscript", "Clear Drawing called");
+        Map<String, String> eventMap = new HashMap<>();
+        eventMap.put("RESTORE_LAST_PATH", "true");
+        rxBus.post(eventMap);
+    }
+
     public void sendBackspace(View view) {
         Log.d("Cyrilliscript", "backspace called");
         handleBackspace();
