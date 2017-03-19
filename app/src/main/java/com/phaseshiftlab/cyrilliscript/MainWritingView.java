@@ -181,7 +181,7 @@ public class MainWritingView extends View {
     }
 
     private void requestOcr() {
-        Log.d("Cyrilliscript", "MotionEvent.ACTION_UP");
+        Log.d("Cyrilliscript", "executing ocr task...");
         if(!this.isInEditMode()) {
             new RequestOcrTask().execute();
         }
