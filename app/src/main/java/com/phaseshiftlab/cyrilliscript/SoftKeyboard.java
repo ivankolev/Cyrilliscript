@@ -137,6 +137,11 @@ public class SoftKeyboard extends InputMethodService
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 
+        subscribeToTopics();
+
+    }
+
+    private void subscribeToTopics() {
         rxBus.receive(Map.class, s -> {
             String recognized = (String) s.get("RECOGNIZED");
             Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
@@ -145,7 +150,6 @@ public class SoftKeyboard extends InputMethodService
                 updateCandidates();
             }
         });
-
     }
 
     /**
