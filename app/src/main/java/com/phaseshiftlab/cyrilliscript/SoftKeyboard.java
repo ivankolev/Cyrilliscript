@@ -137,6 +137,11 @@ public class SoftKeyboard extends InputMethodService
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 
+        subscribeToTopics();
+
+    }
+
+    private void subscribeToTopics() {
         rxBus.receive(Map.class, s -> {
             String recognized = (String) s.get("RECOGNIZED");
             Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
@@ -145,7 +150,6 @@ public class SoftKeyboard extends InputMethodService
                 updateCandidates();
             }
         });
-
     }
 
     /**
@@ -974,6 +978,20 @@ public class SoftKeyboard extends InputMethodService
         Log.d("Cyrilliscript", "Clear Drawing called");
         Map<String, String> eventMap = new HashMap<>();
         eventMap.put("CLEAR", "true");
+        rxBus.post(eventMap);
+    }
+
+    public void deleteLastPath(View view) {
+        Log.d("Cyrilliscript", "Clear Drawing called");
+        Map<String, String> eventMap = new HashMap<>();
+        eventMap.put("DELETE_LAST_PATH", "true");
+        rxBus.post(eventMap);
+    }
+
+    public void restoreLastPath(View view) {
+        Log.d("Cyrilliscript", "Clear Drawing called");
+        Map<String, String> eventMap = new HashMap<>();
+        eventMap.put("RESTORE_LAST_PATH", "true");
         rxBus.post(eventMap);
     }
 

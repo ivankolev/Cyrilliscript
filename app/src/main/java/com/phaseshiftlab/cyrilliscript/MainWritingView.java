@@ -4,36 +4,25 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
 import com.phaseshiftlab.cyrilliscript.events.RxBus;
 import com.phaseshiftlab.ocrlib.OcrService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
-import io.reactivex.plugins.RxJavaPlugins;
 
 /**
  * TODO: document your custom view class.
@@ -180,14 +169,7 @@ public class MainWritingView extends View {
                 drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
-                Log.d("Cyrilliscript", "MotionEvent.ACTION_UP");
-                if(!this.isInEditMode()) {
-                    String recognized = ocrService.requestOCR(canvasBitmap);
-                    Log.d("Cyrilliscript", recognized);
-                    Map<String, String> recognizedMap = new HashMap<>();
-                    recognizedMap.put("RECOGNIZED", recognized);
-                    rxBus.post(recognizedMap);
-                }
+                requestOcr();
                 break;
             default:
                 return false;
@@ -196,5 +178,39 @@ public class MainWritingView extends View {
         // Makes our view repaint and call onDraw
         invalidate();
         return true;
+    }
+
+    private void requestOcr() {
+        Log.d("Cyrilliscript", "executing ocr task...");
+        if(!this.isInEditMode()) {
+            new RequestOcrTask().execute();
+        }
+    }
+
+    private class RequestOcrTask extends AsyncTask<String, Integer, Map> {
+
+        @Override
+        protected Map<String, String> doInBackground(String... params) {
+            String recognized = ocrService.requestOCR(canvasBitmap);
+            Log.d("Cyrilliscript", recognized);
+            Map<String, String> recognizedMap = new HashMap<>();
+            recognizedMap.put("RECOGNIZED", recognized);
+            return recognizedMap;
+        }
+
+        @Override
+        protected void onPostExecute(Map result) {
+            rxBus.post(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Log.d("Cyrilliscript", String.valueOf(values.length));
+        }
     }
 }
