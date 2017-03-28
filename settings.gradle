@@ -1,1 +1,1 @@
-include ':app', ':ocrlib'
+include ':app', ':ocrlib', ':languagelib'
