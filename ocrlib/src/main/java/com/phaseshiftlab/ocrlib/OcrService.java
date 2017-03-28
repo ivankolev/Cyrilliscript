@@ -138,7 +138,6 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
             prepareTrainedDataFiles();
             initTesseractAPI();
         } else {
-            Thread.sleep(15000);
             Log.d(TAG, "Requesting permission to store trained data...");
             PermissionRequester.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -149,9 +148,20 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
         }
     }
 
+    private void setLettersWhitelist() {
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST,"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя");
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST,"1234567890-=!@#$%^&*()_+");
+    }
+
+    private void setDigitsWhitelist() {
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST,"1234567890-=!@#$%^&*()_+");
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST,"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя");
+    }
+
     private void initTesseractAPI() {
         baseAPI = new TessBaseAPI();
         baseAPI.setDebug(true);
         baseAPI.init(DATA_PATH, lang);
+        setLettersWhitelist();
     }
 }
