@@ -146,6 +146,7 @@ public class SoftKeyboard extends InputMethodService
             String recognized = (String) s.get("RECOGNIZED");
             Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
             if(recognized != null) {
+                mComposing.setLength(0);
                 mComposing.append(recognized);
                 updateCandidates();
             }
