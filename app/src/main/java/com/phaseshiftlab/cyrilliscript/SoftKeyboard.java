@@ -18,9 +18,11 @@ package com.phaseshiftlab.cyrilliscript;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
@@ -36,7 +38,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
-import com.phaseshiftlab.cyrilliscript.events.RxBus;
+import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
+import com.phaseshiftlab.languagelib.SpellingDatabaseHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +106,9 @@ public class SoftKeyboard extends InputMethodService
     private final String TAG = SoftKeyboard.class.getSimpleName();
     private MainView mMainView;
 
-    private RxBus rxBus = RxBus.getInstance();
+    private SpellingDatabaseHelper spellingDb;
+    private Cursor suggestedWords;
+    private ArrayList<String> mSuggestionList;
 
     //region Initialization methods
 
@@ -114,6 +123,8 @@ public class SoftKeyboard extends InputMethodService
         Stetho.initializeWithDefaults(this);
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
+
+        spellingDb = new SpellingDatabaseHelper(this);
     }
 
     /**
@@ -137,20 +148,28 @@ public class SoftKeyboard extends InputMethodService
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 
-        subscribeToTopics();
-
     }
 
-    private void subscribeToTopics() {
-        rxBus.receive(Map.class, s -> {
-            String recognized = (String) s.get("RECOGNIZED");
+    @Subscribe
+    public void onWritingViewEvent(WritingViewEvent event) {
+        String recognized = event.getMessage();
+        if(recognized != null) {
             Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
-            if(recognized != null) {
-                mComposing.setLength(0);
-                mComposing.append(recognized);
+            mComposing.setLength(0);
+            mComposing.append(recognized);
+            try {
+                getSuggestedWords(recognized);
+            } catch (Exception e) {
+                Log.d("Cyrilliscript", "Could not retrieve suggested words from the spelling db");
+                Log.d("Cyrilliscript", e.toString());
                 updateCandidates();
             }
-        });
+        }
+    }
+
+    private void getSuggestedWords(String recognized) {
+        Log.d("Cyrilliscript", "searching the spelling db...");
+        new RequestSpellingDbTask().execute(recognized);
     }
 
     /**
@@ -178,6 +197,8 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
+
+        EventBus.getDefault().register(this);
 
         // Apply the selected keyboard to the input view.
         final InputMethodSubtype subtype = mInputMethodManager.getCurrentInputMethodSubtype();
@@ -347,8 +368,6 @@ public class SoftKeyboard extends InputMethodService
         setCandidatesViewShown(true);
 
         return mCandidateView;
-
-
     }
 
     //endregion
@@ -362,7 +381,6 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void onFinishInput() {
         super.onFinishInput();
-
 
         // Clear current composing text and candidates.
         mComposing.setLength(0);
@@ -378,6 +396,7 @@ public class SoftKeyboard extends InputMethodService
         if (mInputView != null) {
             mInputView.closing();
         }
+        EventBus.getDefault().unregister(this);
         System.gc();
 
         shiftState = SHIFT_STATE_INITIAL;
@@ -853,6 +872,12 @@ public class SoftKeyboard extends InputMethodService
                 mCandidateView.clear();
             }
 //            updateShiftKeyState(getCurrentInputEditorInfo());
+        } else if(mSuggestionList != null && mSuggestionList.size() > index){
+            String pickedSuggestion = mSuggestionList.get(index);
+            getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
+            mSuggestionList.clear();
+            updateCandidates();
+            EventBus.getDefault().post(new SoftKeyboardEvent("CLEAR"));
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
             // text, we would commit one of them here.  But for this sample,
@@ -977,23 +1002,17 @@ public class SoftKeyboard extends InputMethodService
 
     public void clearDrawingCanvas(View view) {
         Log.d("Cyrilliscript", "Clear Drawing called");
-        Map<String, String> eventMap = new HashMap<>();
-        eventMap.put("CLEAR", "true");
-        rxBus.post(eventMap);
+        EventBus.getDefault().post(new SoftKeyboardEvent("CLEAR"));
     }
 
     public void deleteLastPath(View view) {
         Log.d("Cyrilliscript", "Clear Drawing called");
-        Map<String, String> eventMap = new HashMap<>();
-        eventMap.put("DELETE_LAST_PATH", "true");
-        rxBus.post(eventMap);
+        EventBus.getDefault().post(new SoftKeyboardEvent("DELETE_LAST_PATH"));
     }
 
     public void restoreLastPath(View view) {
         Log.d("Cyrilliscript", "Clear Drawing called");
-        Map<String, String> eventMap = new HashMap<>();
-        eventMap.put("RESTORE_LAST_PATH", "true");
-        rxBus.post(eventMap);
+        EventBus.getDefault().post(new SoftKeyboardEvent("RESTORE_LAST_PATH"));
     }
 
     public void sendBackspace(View view) {
@@ -1005,5 +1024,29 @@ public class SoftKeyboard extends InputMethodService
         Log.d("Cyrilliscript", "enter called");
         getCurrentInputConnection().sendKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+    }
+
+    private class RequestSpellingDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            String recognized = params[0];
+            suggestedWords = spellingDb.getWords(recognized);
+            ArrayList<String> suggestedList = new ArrayList<>();
+
+            Integer i = 0;
+            while (!suggestedWords.isAfterLast()) {
+                suggestedList.add(suggestedWords.getString(0));
+                i++;
+                suggestedWords.moveToNext();
+            }
+
+            return suggestedList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> result) {
+            mSuggestionList = result;
+            setSuggestions(result, true, true);
+        }
     }
 }

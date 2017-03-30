@@ -17,8 +17,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.phaseshiftlab.cyrilliscript.events.RxBus;
+import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
 import com.phaseshiftlab.ocrlib.OcrService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +58,6 @@ public class MainWritingView extends View {
     private OcrService ocrService;
     boolean isBound = false;
 
-    private RxBus rxBus = RxBus.getInstance();
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -79,20 +82,6 @@ public class MainWritingView extends View {
             bindToService(context);
         }
 
-        rxBus.receive(String.class, s -> {
-            if(s.equals("CLEAR")) {
-                canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
-            }
-        });
-
-        rxBus.receive(Map.class, s -> {
-            String clearEvent = (String) s.get("CLEAR");
-            Log.d("Cyrilliscript", "CLEAR received " + clearEvent);
-            if(clearEvent != null && Objects.equals(clearEvent, "true")) {
-                canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
-            }
-        });
-
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -104,6 +93,14 @@ public class MainWritingView extends View {
         drawPaint.setPathEffect(new CornerPathEffect(50) );
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
+    }
+
+    @Subscribe
+    public void onSoftKeyboardEvent(SoftKeyboardEvent event) {
+        String eventName = event.getMessage();
+        if(eventName != null && Objects.equals(eventName, "CLEAR")) {
+            canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
+        }
     }
 
     @Override
@@ -131,6 +128,18 @@ public class MainWritingView extends View {
 
     public MainWritingView(Context context) {
         super(context);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -187,20 +196,18 @@ public class MainWritingView extends View {
         }
     }
 
-    private class RequestOcrTask extends AsyncTask<String, Integer, Map> {
+    private class RequestOcrTask extends AsyncTask<String, Integer, String> {
 
         @Override
-        protected Map<String, String> doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             String recognized = ocrService.requestOCR(canvasBitmap);
             Log.d("Cyrilliscript", recognized);
-            Map<String, String> recognizedMap = new HashMap<>();
-            recognizedMap.put("RECOGNIZED", recognized);
-            return recognizedMap;
+            return recognized;
         }
 
         @Override
-        protected void onPostExecute(Map result) {
-            rxBus.post(result);
+        protected void onPostExecute(String result) {
+            EventBus.getDefault().post(new WritingViewEvent(result));
         }
 
         @Override
