@@ -198,7 +198,9 @@ public class SoftKeyboard extends InputMethodService
     public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
 
-        EventBus.getDefault().register(this);
+        if(!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
 
         // Apply the selected keyboard to the input view.
         final InputMethodSubtype subtype = mInputMethodManager.getCurrentInputMethodSubtype();
@@ -396,7 +398,6 @@ public class SoftKeyboard extends InputMethodService
         if (mInputView != null) {
             mInputView.closing();
         }
-        EventBus.getDefault().unregister(this);
         System.gc();
 
         shiftState = SHIFT_STATE_INITIAL;
@@ -984,6 +985,11 @@ public class SoftKeyboard extends InputMethodService
 
 
     @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String sUUID = intent.getStringExtra("UUID");
 
@@ -1018,6 +1024,12 @@ public class SoftKeyboard extends InputMethodService
     public void sendBackspace(View view) {
         Log.d("Cyrilliscript", "backspace called");
         handleBackspace();
+    }
+
+    public void sendSpace(View view) {
+        Log.d("Cyrilliscript", "space called");
+        getCurrentInputConnection().sendKeyEvent(
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
     }
 
     public void sendEnter(View view) {

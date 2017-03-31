@@ -11,7 +11,7 @@
 
     <style name="MainViewStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">300dp</item>
+        <item name="android:layout_height">200dp</item>
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:background">#bdbdbd</item>
     </style>

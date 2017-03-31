@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
 import com.phaseshiftlab.ocrlib.OcrService;
@@ -100,6 +101,18 @@ public class MainWritingView extends View {
         String eventName = event.getMessage();
         if(eventName != null && Objects.equals(eventName, "CLEAR")) {
             canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
+        }
+    }
+
+    @Subscribe
+    public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
+        String inputSelected = event.getMessage();
+        if(inputSelected.equals("ABC")) {
+            ocrService.setLettersWhitelist();
+        } else if(inputSelected.equals("123")) {
+            ocrService.setDigitsWhitelist();
+        } else if(inputSelected.equals("$%@")) {
+            ocrService.setSymbolsWhitelist();
         }
     }
 

@@ -50,4 +50,9 @@
     <string name="clear">Clear</string>
     <string name="backspace">Backspace</string>
     <string name="enter">Enter</string>
+    <string-array name="input_select">
+        <item>ABC</item>
+        <item>123</item>
+        <item>$%@</item>
+    </string-array>
 </resources>

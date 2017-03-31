@@ -33,6 +33,9 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
             .getExternalStorageDirectory().toString() + "/TesseractOCR/";
 
     private static final String lang = "bul";
+    private static final String letters = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя";
+    private static final String digits = "1234567890";
+    private static final String symbols = "`~!@#$%^&*()_+-={}[]|\\:;\"'<>/?,.";
     private AssetManager assetManager;
 
     public OcrService() {
@@ -148,15 +151,21 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
         }
     }
 
-    private void setLettersWhitelist() {
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST,"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя");
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST,"1234567890-=!@#$%^&*()_+");
+    public void setLettersWhitelist() {
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, letters);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, digits + symbols);
     }
 
-    private void setDigitsWhitelist() {
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST,"1234567890-=!@#$%^&*()_+");
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST,"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя");
+    public void setDigitsWhitelist() {
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, digits);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, letters + symbols);
     }
+
+    public void setSymbolsWhitelist() {
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, symbols);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, letters + digits);
+    }
+
 
     private void initTesseractAPI() {
         baseAPI = new TessBaseAPI();
