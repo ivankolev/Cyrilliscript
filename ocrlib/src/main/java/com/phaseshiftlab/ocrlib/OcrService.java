@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Binder;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.googlecode.leptonica.android.Pix;
+import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import java.io.File;
@@ -22,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 public class OcrService extends Service implements ActivityCompat.OnRequestPermissionsResultCallback {
     private final Context context;
@@ -114,7 +118,30 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
 
     public String requestOCR(Bitmap bitmap) {
         baseAPI.setImage(bitmap);
-        return baseAPI.getUTF8Text();
+        String recognized = baseAPI.getUTF8Text();
+
+        //dumps the thresholdImage when debugger is attached
+        if (Debug.isDebuggerConnected() || Debug.waitingForDebugger()) {
+            saveThresholdImage();
+        }
+        return recognized;
+    }
+
+    public void saveThresholdImage() {
+        try {
+            Pix rawImage = baseAPI.getThresholdedImage();
+            Bitmap thresholdImage = WriteFile.writeBitmap(rawImage);
+            String path = Environment.getExternalStorageDirectory().toString();
+            OutputStream fOut;
+            File file = new File(path, "thresholdImage."+ UUID.randomUUID().toString() +".jpg");
+            fOut = new FileOutputStream(file);
+
+            thresholdImage.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            fOut.close();
+            rawImage.recycle();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
