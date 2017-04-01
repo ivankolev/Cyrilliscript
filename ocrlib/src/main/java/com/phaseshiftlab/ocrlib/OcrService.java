@@ -198,6 +198,7 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
         baseAPI = new TessBaseAPI();
         baseAPI.setDebug(true);
         baseAPI.init(DATA_PATH, lang);
+        baseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_WORD);
         setLettersWhitelist();
     }
 }

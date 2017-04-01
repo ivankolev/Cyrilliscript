@@ -1020,6 +1020,7 @@ public class SoftKeyboard extends InputMethodService
     //main writing view buttons
     public void clearDrawingCanvas(View view) {
         Log.d(TAG, "Clear Drawing called");
+        setSuggestions(null, true, true);
         EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
     }
 
