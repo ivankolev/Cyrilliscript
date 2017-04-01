@@ -95,11 +95,11 @@ public class MainWritingView extends View {
 
     @Subscribe
     public void onSoftKeyboardEvent(SoftKeyboardEvent event) {
-        String eventName = event.getMessage();
-        if (Objects.equals(eventName, "CLEAR")) {
+        int eventType = event.getEventType();
+        if (Objects.equals(eventType, SoftKeyboardEvent.CLEAR)) {
             pathStack.clear();
             invalidate();
-        } else if (Objects.equals(eventName, "DELETE_LAST_PATH")) {
+        } else if (Objects.equals(eventType, SoftKeyboardEvent.UNDO)) {
             if (pathStack.size() > 0) {
                 pathStack.pop();
                 invalidate();
@@ -110,17 +110,16 @@ public class MainWritingView extends View {
 
     @Subscribe
     public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
-        String inputSelected = event.getMessage();
-        switch (inputSelected) {
-            case "ABC":
-                ocrService.setLettersWhitelist();
-                break;
-            case "123":
-                ocrService.setDigitsWhitelist();
-                break;
-            case "$%@":
-                ocrService.setSymbolsWhitelist();
-                break;
+        int inputSelected = event.getEventType();
+        if (inputSelected == InputSelectChangedEvent.LETTERS) {
+            ocrService.setLettersWhitelist();
+
+        } else if (inputSelected == InputSelectChangedEvent.DIGITS) {
+            ocrService.setDigitsWhitelist();
+
+        } else if (inputSelected == InputSelectChangedEvent.SYMBOLS) {
+            ocrService.setSymbolsWhitelist();
+
         }
     }
 
@@ -195,9 +194,9 @@ public class MainWritingView extends View {
             case MotionEvent.ACTION_UP:
                 drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
+                requestOcr();
                 pathStack.push(drawPath);
                 drawPath = new Path();
-                requestOcr();
                 break;
             default:
                 return false;

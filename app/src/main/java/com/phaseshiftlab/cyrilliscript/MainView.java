@@ -59,7 +59,7 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        EventBus.getDefault().post(new InputSelectChangedEvent((String )parent.getItemAtPosition(position)));
+        EventBus.getDefault().post(new InputSelectChangedEvent(position));
     }
 
     @Override

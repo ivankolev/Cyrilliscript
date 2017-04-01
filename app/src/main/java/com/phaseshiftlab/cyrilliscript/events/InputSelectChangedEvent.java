@@ -1,13 +1,21 @@
 package com.phaseshiftlab.cyrilliscript.events;
 
 public class InputSelectChangedEvent {
-    private final String message;
+    private final int eventType;
+    public static final int LETTERS;
+    public static final int DIGITS;
+    public static final int SYMBOLS;
 
-    public InputSelectChangedEvent(String message) {
-        this.message = message;
+    static {
+        LETTERS = 0;
+        DIGITS = 1;
+        SYMBOLS = 2;
+    }
+    public InputSelectChangedEvent(int eventType) {
+        this.eventType = eventType;
     }
 
-    public String getMessage() {
-        return this.message;
+    public int getEventType() {
+        return this.eventType;
     }
 }

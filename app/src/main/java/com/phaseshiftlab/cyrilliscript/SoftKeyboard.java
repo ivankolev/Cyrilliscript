@@ -48,9 +48,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -105,13 +103,13 @@ public class SoftKeyboard extends InputMethodService
 
     private String mWordSeparators;
 
-    private final String TAG = SoftKeyboard.class.getSimpleName();
+    private final String TAG = "Cyrilliscript" + SoftKeyboard.class.getSimpleName();
     private MainView mMainView;
 
     private SpellingDatabaseHelper spellingDb;
     private Cursor suggestedWords;
     private ArrayList<String> mSuggestionList;
-    private String mCurrentInputSelect;
+    private int mCurrentInputSelect;
 
     //region Initialization methods
 
@@ -157,7 +155,7 @@ public class SoftKeyboard extends InputMethodService
     public void onWritingViewEvent(WritingViewEvent event) {
         String recognized = event.getMessage();
         if(recognized != null) {
-            Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
+            Log.d(TAG, "RECOGNIZED received " + recognized);
             mComposing.setLength(0);
             mComposing.append(recognized);
 
@@ -165,8 +163,8 @@ public class SoftKeyboard extends InputMethodService
                 try {
                     getSuggestedWords(recognized);
                 } catch (Exception e) {
-                    Log.d("Cyrilliscript", "Could not retrieve suggested words from the spelling db");
-                    Log.d("Cyrilliscript", e.toString());
+                    Log.d(TAG, "Could not retrieve suggested words from the spelling db");
+                    Log.d(TAG, e.toString());
                     updateCandidates();
                 }
             } else {
@@ -177,11 +175,11 @@ public class SoftKeyboard extends InputMethodService
 
     @Subscribe
     public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
-        mCurrentInputSelect = event.getMessage();
+        mCurrentInputSelect = event.getEventType();
     }
 
     private void getSuggestedWords(String recognized) {
-        Log.d("Cyrilliscript", "searching the spelling db...");
+        Log.d(TAG, "searching the spelling db...");
         new RequestSpellingDbTask().execute(recognized);
     }
 
@@ -891,7 +889,7 @@ public class SoftKeyboard extends InputMethodService
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
             updateCandidates();
-            EventBus.getDefault().post(new SoftKeyboardEvent("CLEAR"));
+            EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
             // text, we would commit one of them here.  But for this sample,
@@ -1019,34 +1017,35 @@ public class SoftKeyboard extends InputMethodService
         return super.onStartCommand(intent, flags, startId);
     }
 
+    //main writing view buttons
     public void clearDrawingCanvas(View view) {
-        Log.d("Cyrilliscript", "Clear Drawing called");
-        EventBus.getDefault().post(new SoftKeyboardEvent("CLEAR"));
+        Log.d(TAG, "Clear Drawing called");
+        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
     }
 
     public void deleteLastPath(View view) {
-        Log.d("Cyrilliscript", "Undo called");
-        EventBus.getDefault().post(new SoftKeyboardEvent("DELETE_LAST_PATH"));
+        Log.d(TAG, "Undo called");
+        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.UNDO));
     }
 
     public void restoreLastPath(View view) {
-        Log.d("Cyrilliscript", "Redo called");
-        EventBus.getDefault().post(new SoftKeyboardEvent("RESTORE_LAST_PATH"));
+        Log.d(TAG, "Redo called");
+        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.REDO));
     }
 
     public void sendBackspace(View view) {
-        Log.d("Cyrilliscript", "backspace called");
+        Log.d(TAG, "backspace called");
         handleBackspace();
     }
 
     public void sendSpace(View view) {
-        Log.d("Cyrilliscript", "space called");
+        Log.d(TAG, "space called");
         getCurrentInputConnection().sendKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
     }
 
     public void sendEnter(View view) {
-        Log.d("Cyrilliscript", "enter called");
+        Log.d(TAG, "enter called");
         getCurrentInputConnection().sendKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
     }
