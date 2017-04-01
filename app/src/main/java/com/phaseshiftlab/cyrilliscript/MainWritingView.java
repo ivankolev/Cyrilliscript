@@ -25,8 +25,7 @@ import com.phaseshiftlab.ocrlib.OcrService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayDeque;
 import java.util.Objects;
 
 /**
@@ -40,9 +39,6 @@ public class MainWritingView extends View {
 
     private Path drawPath;
 
-    //defines what to draw
-    private Paint canvasPaint;
-
     //defines how to draw
     private Paint drawPaint;
 
@@ -55,6 +51,8 @@ public class MainWritingView extends View {
 
     //canvas bitmap
     private Bitmap canvasBitmap;
+
+    private ArrayDeque<Path> pathStack = new ArrayDeque<>();
 
     private OcrService ocrService;
     boolean isBound = false;
@@ -77,7 +75,7 @@ public class MainWritingView extends View {
 
     public MainWritingView(Context context, AttributeSet attrs) throws InterruptedException {
         super(context, attrs);
-        if(!this.isInEditMode()) {
+        if (!this.isInEditMode()) {
             DATA_PATH = Environment
                     .getExternalStorageDirectory().toString() + "/TesseractOCR/";
             bindToService(context);
@@ -91,43 +89,44 @@ public class MainWritingView extends View {
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawPaint.setPathEffect(new CornerPathEffect(50) );
+        drawPaint.setPathEffect(new CornerPathEffect(50));
 
-        canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
     @Subscribe
     public void onSoftKeyboardEvent(SoftKeyboardEvent event) {
         String eventName = event.getMessage();
-        if(eventName != null && Objects.equals(eventName, "CLEAR")) {
-            canvasBitmap.eraseColor(getResources().getColor(R.color.main_writing_view_bg));
+        if (Objects.equals(eventName, "CLEAR")) {
+            pathStack.clear();
+            invalidate();
+        } else if (Objects.equals(eventName, "DELETE_LAST_PATH")) {
+            if (pathStack.size() > 0) {
+                pathStack.pop();
+                invalidate();
+                requestOcr();
+            }
         }
     }
 
     @Subscribe
     public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
         String inputSelected = event.getMessage();
-        if(inputSelected.equals("ABC")) {
-            ocrService.setLettersWhitelist();
-        } else if(inputSelected.equals("123")) {
-            ocrService.setDigitsWhitelist();
-        } else if(inputSelected.equals("$%@")) {
-            ocrService.setSymbolsWhitelist();
+        switch (inputSelected) {
+            case "ABC":
+                ocrService.setLettersWhitelist();
+                break;
+            case "123":
+                ocrService.setDigitsWhitelist();
+                break;
+            case "$%@":
+                ocrService.setSymbolsWhitelist();
+                break;
         }
     }
 
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
-//        parentView = (MainView) this.getParent();
-//
-//        final Button button = (Button) parentView.findViewById(R.id.clear);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                invalidate();
-//                // Perform action on click
-//            }
-//        });
     }
 
     private void bindToService(Context context) {
@@ -170,8 +169,14 @@ public class MainWritingView extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(canvasBitmap, 0 , 0, canvasPaint);
+        drawFromPathStack(canvas);
+    }
+
+    private void drawFromPathStack(Canvas canvas) {
         canvas.drawPath(drawPath, drawPaint);
+        for (Path aPathStack : pathStack) {
+            canvas.drawPath(aPathStack, drawPaint);
+        }
     }
 
     @Override
@@ -190,7 +195,8 @@ public class MainWritingView extends View {
             case MotionEvent.ACTION_UP:
                 drawPath.lineTo(touchX, touchY);
                 drawCanvas.drawPath(drawPath, drawPaint);
-                drawPath.reset();
+                pathStack.push(drawPath);
+                drawPath = new Path();
                 requestOcr();
                 break;
             default:
@@ -202,19 +208,27 @@ public class MainWritingView extends View {
         return true;
     }
 
+    public Bitmap getBitmap() {
+        this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+        this.setDrawingCacheEnabled(false);
+        return bmp;
+    }
+
     private void requestOcr() {
-        Log.d("Cyrilliscript", "executing ocr task...");
-        if(!this.isInEditMode()) {
-            new RequestOcrTask().execute();
+        Log.d(TAG, "executing ocr task...");
+        if (!this.isInEditMode()) {
+            new RequestOcrTask().execute(this.getBitmap());
         }
     }
 
-    private class RequestOcrTask extends AsyncTask<String, Integer, String> {
+    private class RequestOcrTask extends AsyncTask<Bitmap, Integer, String> {
 
         @Override
-        protected String doInBackground(String... params) {
-            String recognized = ocrService.requestOCR(canvasBitmap);
-            Log.d("Cyrilliscript", recognized);
+        protected String doInBackground(Bitmap... params) {
+            String recognized = ocrService.requestOCR(params[0]);
+            Log.d(TAG, recognized);
             return recognized;
         }
 
@@ -230,7 +244,7 @@ public class MainWritingView extends View {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            Log.d("Cyrilliscript", String.valueOf(values.length));
+            Log.d(TAG, String.valueOf(values.length));
         }
     }
 }

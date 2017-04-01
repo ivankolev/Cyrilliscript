@@ -38,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
+import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
 import com.phaseshiftlab.languagelib.SpellingDatabaseHelper;
@@ -50,6 +51,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Example of writing an input method for a soft keyboard.  This code is
@@ -109,6 +111,7 @@ public class SoftKeyboard extends InputMethodService
     private SpellingDatabaseHelper spellingDb;
     private Cursor suggestedWords;
     private ArrayList<String> mSuggestionList;
+    private String mCurrentInputSelect;
 
     //region Initialization methods
 
@@ -157,14 +160,24 @@ public class SoftKeyboard extends InputMethodService
             Log.d("Cyrilliscript", "RECOGNIZED received " + recognized);
             mComposing.setLength(0);
             mComposing.append(recognized);
-            try {
-                getSuggestedWords(recognized);
-            } catch (Exception e) {
-                Log.d("Cyrilliscript", "Could not retrieve suggested words from the spelling db");
-                Log.d("Cyrilliscript", e.toString());
+
+            if(Objects.equals(mCurrentInputSelect, "ABC")) {
+                try {
+                    getSuggestedWords(recognized);
+                } catch (Exception e) {
+                    Log.d("Cyrilliscript", "Could not retrieve suggested words from the spelling db");
+                    Log.d("Cyrilliscript", e.toString());
+                    updateCandidates();
+                }
+            } else {
                 updateCandidates();
             }
         }
+    }
+
+    @Subscribe
+    public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
+        mCurrentInputSelect = event.getMessage();
     }
 
     private void getSuggestedWords(String recognized) {
@@ -1012,12 +1025,12 @@ public class SoftKeyboard extends InputMethodService
     }
 
     public void deleteLastPath(View view) {
-        Log.d("Cyrilliscript", "Clear Drawing called");
+        Log.d("Cyrilliscript", "Undo called");
         EventBus.getDefault().post(new SoftKeyboardEvent("DELETE_LAST_PATH"));
     }
 
     public void restoreLastPath(View view) {
-        Log.d("Cyrilliscript", "Clear Drawing called");
+        Log.d("Cyrilliscript", "Redo called");
         EventBus.getDefault().post(new SoftKeyboardEvent("RESTORE_LAST_PATH"));
     }
 
@@ -1057,8 +1070,13 @@ public class SoftKeyboard extends InputMethodService
 
         @Override
         protected void onPostExecute(ArrayList<String> result) {
-            mSuggestionList = result;
-            setSuggestions(result, true, true);
+            if(result.size() > 0) {
+                mSuggestionList = result;
+                setSuggestions(result, true, true);
+            } else {//nothing from the spelling db, so suggest what the ocr has returned
+                updateCandidates();
+            }
+
         }
     }
 }
