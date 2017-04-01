@@ -27,6 +27,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,6 +297,8 @@ class CandidateView extends View {
                     mService.pickSuggestionManually(mSelectedIndex);
                 }
             }
+
+            EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
             mSelectedIndex = -1;
             removeHighlight();
             requestLayout();
