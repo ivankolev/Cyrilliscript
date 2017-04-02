@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

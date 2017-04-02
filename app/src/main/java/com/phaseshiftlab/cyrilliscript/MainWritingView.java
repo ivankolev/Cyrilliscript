@@ -17,9 +17,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
-import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
-import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.WritingViewEvent;
 import com.phaseshiftlab.ocrlib.OcrService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,6 +56,8 @@ public class MainWritingView extends View {
 
     private OcrService ocrService;
     boolean isBound = false;
+
+    private EventBus eventBus;
 
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -144,13 +146,14 @@ public class MainWritingView extends View {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        EventBus.getDefault().register(this);
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        EventBus.getDefault().unregister(this);
+        eventBus.unregister(this);
     }
 
     @Override
@@ -233,7 +236,7 @@ public class MainWritingView extends View {
 
         @Override
         protected void onPostExecute(String result) {
-            EventBus.getDefault().post(new WritingViewEvent(result));
+            eventBus.post(new WritingViewEvent(result));
         }
 
         @Override

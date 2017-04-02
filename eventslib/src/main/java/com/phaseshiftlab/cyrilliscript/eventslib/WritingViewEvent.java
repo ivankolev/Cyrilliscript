@@ -1,4 +1,4 @@
-package com.phaseshiftlab.cyrilliscript.events;
+package com.phaseshiftlab.cyrilliscript.eventslib;
 
 public class WritingViewEvent {
     private final String message;

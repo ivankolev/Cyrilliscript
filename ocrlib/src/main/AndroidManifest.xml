@@ -10,9 +10,6 @@
             android:name=".OcrService"
             android:enabled="true"
             android:exported="false" />
-        <activity
-            android:name=".PermissionRequester$PermissionRequestActivity" >
-        </activity>
     </application>
 
 </manifest>

@@ -19,6 +19,10 @@ import android.util.Log;
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -162,19 +166,33 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
         }
     }
 
+    @Subscribe
+    void onPermissionEvent(PermissionEvent event) {
+        if(event.getEventType() == PermissionEvent.GRANTED) {
+            initialize();
+        }
+    }
+
+    private void initialize() {
+        try {
+            prepareTrainedDataFiles();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        initTesseractAPI();
+    }
+
+    private void requestPermissions() {
+        Intent dialogIntent = new Intent(this, PermissionRequestActivity.class);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.startActivity(dialogIntent);
+    }
 
     public void initRequiredFiles() throws InterruptedException {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            prepareTrainedDataFiles();
-            initTesseractAPI();
+            initialize();
         } else {
-            Log.d(TAG, "Requesting permission to store trained data...");
-            PermissionRequester.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERM_REQUEST_LOCATION_NOTIFICATION,
-                    context.getString(R.string.notify_perm_title),
-                    context.getString(R.string.notify_perm_body),
-                    android.R.drawable.ic_secure);
+            requestPermissions();
         }
     }
 

@@ -9,7 +9,7 @@
 
     <application
         android:label="@string/ime_name"
-        android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+        android:theme="@android:style/Theme.Material.NoActionBar.TranslucentDecor">
         <service
             android:name=".SoftKeyboard"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -21,20 +21,6 @@
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
-
-        <activity
-            android:name=".ImePreferences"
-            android:label="@string/settings_name">
-
-        </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

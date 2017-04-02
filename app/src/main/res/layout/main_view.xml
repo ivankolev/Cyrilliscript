@@ -38,6 +38,7 @@
         android:layout_width="44dp"
         android:layout_height="36dp"
         android:drawableStart="@drawable/ic_space_bar_black_24dp"
+        android:tint="@color/white"
         android:onClick="sendSpace"
         app:layout_constraintLeft_toRightOf="@+id/backspaceButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/clearButton" />

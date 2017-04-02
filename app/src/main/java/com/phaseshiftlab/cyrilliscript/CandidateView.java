@@ -27,7 +27,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

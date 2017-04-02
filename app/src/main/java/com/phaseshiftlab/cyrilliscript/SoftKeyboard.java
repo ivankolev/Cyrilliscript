@@ -16,21 +16,14 @@
 
 package com.phaseshiftlab.cyrilliscript;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
@@ -45,12 +38,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
-import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
-import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.WritingViewEvent;
 import com.phaseshiftlab.languagelib.SpellingDatabaseHelper;
 
 import org.greenrobot.eventbus.EventBus;

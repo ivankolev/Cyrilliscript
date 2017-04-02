@@ -1,35 +1,46 @@
 package com.phaseshiftlab.cyrilliscript;
 
 import android.Manifest;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.text.DateFormat;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
+import android.util.Log;
+import android.util.LogPrinter;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.RuntimeExecutionException;
-import com.phaseshiftlab.cyrilliscript.events.PermissionEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import static android.support.v4.content.ContextCompat.startActivity;
+import java.util.Date;
 
 
-class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private String TAG = "Cyrilliscript";
     private Tracker mTracker;
     private GoogleApiClient mGoogleApiClient;
     private SoftKeyboard mSoftKeyboard;
-    private SettingsActivity mSettingsActivity;
+    private Location mLocation;
+
+    GoogleApiFacade() {
+    }
 
     GoogleApiFacade(SoftKeyboard keyboard) {
         this.mSoftKeyboard = keyboard;
@@ -83,7 +94,7 @@ class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiC
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(mSoftKeyboard, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mSoftKeyboard, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermisions();
+            requestPermissions();
             return;
         }
         getLocation();
@@ -91,11 +102,20 @@ class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiC
 
     private void getLocation() {
         try {
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            String latitude = String.valueOf(mLastLocation.getLatitude());
-            String longitude = String.valueOf(mLastLocation.getLongitude());
+            Log.d(TAG, "in getLocation");
+            mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if(mLocation == null) {
+                Log.d(TAG, "getLastLocation returned null, calling requestLocationUpdates...");
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, LocationRequest.create(), this);
+            } else {
+                String latitude = String.valueOf(mLocation.getLatitude());
+                String longitude = String.valueOf(mLocation.getLongitude());
+                Log.d(TAG, latitude);
+                Log.d(TAG, longitude);
+            }
+
         } catch(SecurityException e) {
-            requestPermisions();
+            requestPermissions();
         }
 
     }
@@ -107,8 +127,8 @@ class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiC
         }
     }
 
-    private void requestPermisions() {
-        Intent dialogIntent = new Intent(mSoftKeyboard, SettingsActivity.class);
+    private void requestPermissions() {
+        Intent dialogIntent = new Intent(mSoftKeyboard, PermissionRequestActivity.class);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mSoftKeyboard.startActivity(dialogIntent);
     }
@@ -126,5 +146,12 @@ class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiC
     protected void finalize() throws Throwable {
         super.finalize();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "Received location");
+        location.dump(new LogPrinter(Log.DEBUG, TAG), "location");
+        mLocation = location;
     }
 }
