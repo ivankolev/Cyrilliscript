@@ -16,6 +16,10 @@
 
 package com.phaseshiftlab.cyrilliscript;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -60,6 +64,7 @@ import java.util.Objects;
  */
 public class SoftKeyboard extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
+    private Tracker mTracker;
     static final boolean DEBUG = true;
 
     /**
@@ -103,7 +108,7 @@ public class SoftKeyboard extends InputMethodService
 
     private String mWordSeparators;
 
-    private final String TAG = "Cyrilliscript" + SoftKeyboard.class.getSimpleName();
+    private final String TAG = "Cyrilliscript " + SoftKeyboard.class.getSimpleName();
     private MainView mMainView;
 
     private SpellingDatabaseHelper spellingDb;
@@ -112,15 +117,26 @@ public class SoftKeyboard extends InputMethodService
     private int mCurrentInputSelect;
 
     //region Initialization methods
-
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(R.xml.global_tracker);
+        }
+        return mTracker;
+    }
     /**
      * Main initialization of the input method component.  Be sure to call
      * to super class.
      */
     @Override
     public void onCreate() {
-        getAssets();
         super.onCreate();
+        getAssets();
+
+        this.getDefaultTracker();
+        mTracker.setAnonymizeIp(true);
+
         Stetho.initializeWithDefaults(this);
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
@@ -154,12 +170,17 @@ public class SoftKeyboard extends InputMethodService
     @Subscribe
     public void onWritingViewEvent(WritingViewEvent event) {
         String recognized = event.getMessage();
-        if(recognized != null) {
+        if(recognized != null && !Objects.equals(recognized, "")) {
             Log.d(TAG, "RECOGNIZED received " + recognized);
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Event")
+                    .setAction("Recognized")
+                    .setValue(recognized.length())
+                    .build());
             mComposing.setLength(0);
             mComposing.append(recognized);
 
-            if(Objects.equals(mCurrentInputSelect, "ABC")) {
+            if(Objects.equals(mCurrentInputSelect, InputSelectChangedEvent.LETTERS)) {
                 try {
                     getSuggestedWords(recognized);
                 } catch (Exception e) {
@@ -1071,6 +1092,12 @@ public class SoftKeyboard extends InputMethodService
         @Override
         protected void onPostExecute(ArrayList<String> result) {
             if(result.size() > 0) {
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Event")
+                        .setAction("Spelling")
+                        .setLabel("Words")
+                        .setValue(result.size())
+                        .build());
                 mSuggestionList = result;
                 setSuggestions(result, true, true);
             } else {//nothing from the spelling db, so suggest what the ocr has returned

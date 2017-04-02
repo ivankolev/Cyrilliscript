@@ -27,4 +27,5 @@ dependencies {
     compile project(path: ':languagelib')
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.google.android.gms:play-services-analytics:10.2.1'
 }

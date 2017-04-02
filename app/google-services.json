@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "1001942452718",
+    "project_id": "cyrilliscript"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001942452718:android:bd4f0601f15eb327",
+        "android_client_info": {
+          "package_name": "com.phaseshiftlab.cyrilliscript"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_CT_vTKy9JKYPAn4XFgvAELiHWOqPynk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-96605836-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
