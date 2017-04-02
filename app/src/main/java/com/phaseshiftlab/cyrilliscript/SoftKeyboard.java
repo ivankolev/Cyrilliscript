@@ -16,18 +16,21 @@
 
 package com.phaseshiftlab.cyrilliscript;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
@@ -42,6 +45,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.phaseshiftlab.cyrilliscript.events.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.events.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.events.WritingViewEvent;
@@ -64,7 +70,6 @@ import java.util.Objects;
  */
 public class SoftKeyboard extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener {
-    private Tracker mTracker;
     static final boolean DEBUG = true;
 
     /**
@@ -116,15 +121,10 @@ public class SoftKeyboard extends InputMethodService
     private ArrayList<String> mSuggestionList;
     private int mCurrentInputSelect;
 
+    private GoogleApiFacade mGoogleApiFacade;
+
     //region Initialization methods
-    synchronized public Tracker getDefaultTracker() {
-        if (mTracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(R.xml.global_tracker);
-        }
-        return mTracker;
-    }
+
     /**
      * Main initialization of the input method component.  Be sure to call
      * to super class.
@@ -133,9 +133,7 @@ public class SoftKeyboard extends InputMethodService
     public void onCreate() {
         super.onCreate();
         getAssets();
-
-        this.getDefaultTracker();
-        mTracker.setAnonymizeIp(true);
+        mGoogleApiFacade = new GoogleApiFacade(this);
 
         Stetho.initializeWithDefaults(this);
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -143,6 +141,7 @@ public class SoftKeyboard extends InputMethodService
 
         spellingDb = new SpellingDatabaseHelper(this);
     }
+
 
     /**
      * This is the point where you can do all of your UI initialization.  It
@@ -165,22 +164,18 @@ public class SoftKeyboard extends InputMethodService
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 
+        mGoogleApiFacade.connect();
     }
 
     @Subscribe
     public void onWritingViewEvent(WritingViewEvent event) {
         String recognized = event.getMessage();
-        if(recognized != null && !Objects.equals(recognized, "")) {
+        if (recognized != null && !Objects.equals(recognized, "")) {
             Log.d(TAG, "RECOGNIZED received " + recognized);
-            mTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("Event")
-                    .setAction("Recognized")
-                    .setValue(recognized.length())
-                    .build());
             mComposing.setLength(0);
             mComposing.append(recognized);
 
-            if(Objects.equals(mCurrentInputSelect, InputSelectChangedEvent.LETTERS)) {
+            if (Objects.equals(mCurrentInputSelect, InputSelectChangedEvent.LETTERS)) {
                 try {
                     getSuggestedWords(recognized);
                 } catch (Exception e) {
@@ -230,7 +225,7 @@ public class SoftKeyboard extends InputMethodService
     public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
 
-        if(!EventBus.getDefault().isRegistered(this)) {
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
 
@@ -905,7 +900,7 @@ public class SoftKeyboard extends InputMethodService
                 mCandidateView.clear();
             }
 //            updateShiftKeyState(getCurrentInputEditorInfo());
-        } else if(mSuggestionList != null && mSuggestionList.size() > index){
+        } else if (mSuggestionList != null && mSuggestionList.size() > index) {
             String pickedSuggestion = mSuggestionList.get(index);
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
@@ -1019,6 +1014,7 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        mGoogleApiFacade.disconnect();
     }
 
     @Override
@@ -1041,12 +1037,14 @@ public class SoftKeyboard extends InputMethodService
     //main writing view buttons
     public void clearDrawingCanvas(View view) {
         Log.d(TAG, "Clear Drawing called");
+        mGoogleApiFacade.sendAnalyticsEvent("CLEAR");
         setSuggestions(null, true, true);
         EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
     }
 
     public void deleteLastPath(View view) {
         Log.d(TAG, "Undo called");
+        mGoogleApiFacade.sendAnalyticsEvent("UNDO");
         EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.UNDO));
     }
 
@@ -1092,13 +1090,6 @@ public class SoftKeyboard extends InputMethodService
         @Override
         protected void onPostExecute(ArrayList<String> result) {
             if(result.size() > 0) {
-                mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Event")
-                        .setAction("Spelling")
-                        .setLabel("Words")
-                        .setValue(result.size())
-                        .build());
-                mSuggestionList = result;
                 setSuggestions(result, true, true);
             } else {//nothing from the spelling db, so suggest what the ocr has returned
                 updateCandidates();

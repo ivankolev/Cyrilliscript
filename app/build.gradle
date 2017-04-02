@@ -5,6 +5,7 @@ android {
     defaultConfig {
         applicationId "com.phaseshiftlab.cyrilliscript"
         minSdkVersion 19
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -21,11 +22,13 @@ android {
 }
 
 dependencies {
-    compile 'com.facebook.stetho:stetho:1.4.2'
-    compile 'com.android.support:support-v4:25.3.1'
     compile project(path: ':ocrlib')
     compile project(path: ':languagelib')
+    compile 'com.facebook.stetho:stetho:1.4.2'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.android.gms:play-services-analytics:10.2.1'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.android.support:support-vector-drawable:25.3.1'
 }
