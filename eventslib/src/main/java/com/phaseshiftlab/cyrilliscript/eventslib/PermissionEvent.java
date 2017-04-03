@@ -1,6 +1,6 @@
 package com.phaseshiftlab.cyrilliscript.eventslib;
 
-public class PermissionEvent {
+public class PermissionEvent extends BaseEnumerationEvent {
 
     public static final int DENIED;
     public static final int GRANTED;
@@ -10,14 +10,8 @@ public class PermissionEvent {
         GRANTED = 1;
     }
 
-
-    private final int eventType;
-
     public PermissionEvent(int eventType) {
-        this.eventType = eventType;
+        super(eventType);
     }
 
-    public int getEventType() {
-        return this.eventType;
-    }
 }

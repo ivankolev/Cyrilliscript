@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 import com.phaseshiftlab.cyrilliscript.FetchAddressIntentService;
@@ -46,6 +47,8 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
     private AddressResultReceiver mResultReceiver;
     private HashMap<String, String> mAddressOutput;
 
+    private EventBus eventBus = EventBus.getDefault();
+
 
     GoogleApiFacade() {
     }
@@ -54,8 +57,8 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
         this.mSoftKeyboard = keyboard;
         initGoogleAnalyticsAPI();
         initGoogleLocationAPI();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
         }
     }
 
@@ -186,8 +189,11 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
 
             // Show a toast message if an address was found.
             if (resultCode == Constants.SUCCESS_RESULT) {
-                Log.d(TAG, mAddressOutput.get(Constants.FULL_ADDRESS));
-                Log.d(TAG + " country:", mAddressOutput.get(Constants.COUNTRY_CODE));
+                String fullAddress = mAddressOutput.get(Constants.FULL_ADDRESS);
+                String countryCode = mAddressOutput.get(Constants.COUNTRY_CODE);
+                Log.d(TAG, fullAddress);
+                Log.d(TAG + " country:", countryCode);
+                eventBus.post(new LocationEvent(countryCode));
             }
 
         }

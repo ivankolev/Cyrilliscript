@@ -1,7 +1,6 @@
 package com.phaseshiftlab.cyrilliscript.eventslib;
 
-public class InputSelectChangedEvent {
-    private final int eventType;
+public class InputSelectChangedEvent extends BaseEnumerationEvent {
     public static final int LETTERS;
     public static final int DIGITS;
     public static final int SYMBOLS;
@@ -12,10 +11,6 @@ public class InputSelectChangedEvent {
         SYMBOLS = 2;
     }
     public InputSelectChangedEvent(int eventType) {
-        this.eventType = eventType;
-    }
-
-    public int getEventType() {
-        return this.eventType;
+        super(eventType);
     }
 }

@@ -1,6 +1,6 @@
 package com.phaseshiftlab.cyrilliscript.eventslib;
 
-public class SoftKeyboardEvent {
+public class SoftKeyboardEvent extends BaseEnumerationEvent {
 
     public static final int CLEAR;
     public static final int UNDO;
@@ -12,14 +12,7 @@ public class SoftKeyboardEvent {
         REDO = 2;
     }
 
-
-    private final int eventType;
-
     public SoftKeyboardEvent(int eventType) {
-        this.eventType = eventType;
-    }
-
-    public int getEventType() {
-        return this.eventType;
+        super(eventType);
     }
 }

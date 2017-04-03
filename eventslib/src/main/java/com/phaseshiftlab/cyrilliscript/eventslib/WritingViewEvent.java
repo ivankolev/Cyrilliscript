@@ -1,12 +1,7 @@
 package com.phaseshiftlab.cyrilliscript.eventslib;
 
-public class WritingViewEvent {
-    private final String message;
+public class WritingViewEvent extends BaseMessageEvent {
     public WritingViewEvent(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return this.message;
+        super(message);
     }
 }

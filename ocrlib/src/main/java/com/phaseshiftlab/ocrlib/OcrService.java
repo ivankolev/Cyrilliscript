@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.util.Log;
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 
@@ -29,21 +31,69 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-public class OcrService extends Service implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class OcrService extends Service {
+
+    private enum Alphabets {
+        BG_CYRILLIC("АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя"),
+        EN_LATIN("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
+        DIGITS("1234567890"),
+        SYMBOLS("`~!@#$%^&*()_+-={}[]|\\:;\"'<>/?,.");
+        private String alphabet;
+
+        Alphabets(String alphabet) {
+            this.alphabet = alphabet;
+        }
+
+        public String getAlphabet() {
+            return alphabet;
+        }
+    }
+
+    private enum TesseractFiles {
+        BG("bul"),
+        EN("eng");
+
+        private String language;
+        TesseractFiles(String language) {
+            this.language = language;
+        }
+
+        public String getFileName() {
+            return language + ".traineddata";
+        }
+
+        public String getLanguage() {
+            return language;
+        }
+    }
+
+    private static Map<String, String> countryCodes;
+
+    static {
+        countryCodes = new HashMap<>();
+        countryCodes.put("BG", "bul");
+        countryCodes.put("US", "eng");
+    }
+
     private final Context context;
     private TessBaseAPI baseAPI;
     private IBinder myBinder = new MyBinder();
-    private static final int PERM_REQUEST_LOCATION_NOTIFICATION = 99;
     private static final String TAG = "Cyrilliscript";
     private static final String DATA_PATH = Environment
             .getExternalStorageDirectory().toString() + "/TesseractOCR/";
 
-    private static final String lang = "bul";
-    private static final String letters = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя";
-    private static final String digits = "1234567890";
-    private static final String symbols = "`~!@#$%^&*()_+-={}[]|\\:;\"'<>/?,.";
+    private static String lang = TesseractFiles.BG.getLanguage();
+    private static String langFile = TesseractFiles.BG.getFileName();
+    private static String letters = Alphabets.BG_CYRILLIC.getAlphabet();
+    private static String digits = Alphabets.DIGITS.getAlphabet();
+    private static String symbols = Alphabets.SYMBOLS.getAlphabet();
+
+    private SharedPreferences preferences = getSharedPreferences(TAG, MODE_PRIVATE);
+
     private AssetManager assetManager;
 
     public OcrService() {
@@ -77,25 +127,29 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
             }
         }
 
-        if (!(new File(DATA_PATH + "tessdata/" + lang + ".traineddata")).exists()) {
+        if (!(new File(DATA_PATH + "tessdata/" + langFile)).exists()) {
             try {
                 Log.v(TAG, "Opening .traineddata asset");
-                InputStream in = context.getAssets().open("tessdata/" + lang + ".traineddata");
-                OutputStream out = new FileOutputStream(new File(DATA_PATH + "tessdata/", lang + ".traineddata"));
-
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) != -1) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-
-                Log.v(TAG, "Copied " + lang + " traineddata");
+                copyTrainedDataFile();
+                preferences.edit().putBoolean(lang, true).apply();
+                Log.v(TAG, "Copied " + langFile);
             } catch (IOException e) {
-                Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+                Log.e(TAG, "Was unable to copy " + langFile + " " + e.toString());
             }
         }
+    }
+
+    private void copyTrainedDataFile() throws IOException {
+        InputStream in = context.getAssets().open("tessdata/" + langFile);
+        OutputStream out = new FileOutputStream(new File(DATA_PATH + "tessdata/", langFile));
+
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) != -1) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
     }
 
     @Override
@@ -137,39 +191,34 @@ public class OcrService extends Service implements ActivityCompat.OnRequestPermi
             Bitmap thresholdImage = WriteFile.writeBitmap(rawImage);
             String path = Environment.getExternalStorageDirectory().toString();
             OutputStream fOut;
-            File file = new File(path, "thresholdImage."+ UUID.randomUUID().toString() +".jpg");
+            File file = new File(path, "thresholdImage." + UUID.randomUUID().toString() + ".jpg");
             fOut = new FileOutputStream(file);
 
             thresholdImage.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
             fOut.close();
             rawImage.recycle();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean isGranted = false;
-        for (int i = 0; i < grantResults.length; i++)
-            if (permissions[i].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && (grantResults[i] == PackageManager.PERMISSION_GRANTED))
-                isGranted = true;
-        if (isGranted) {
-            try {
-                prepareTrainedDataFiles();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            initTesseractAPI();
-        } else {
-            Log.d(TAG, "WRITE_EXTERNAL_STORAGE permission not granted.");
         }
     }
 
     @Subscribe
     void onPermissionEvent(PermissionEvent event) {
-        if(event.getEventType() == PermissionEvent.GRANTED) {
+        if (event.getEventType() == PermissionEvent.GRANTED) {
             initialize();
+        }
+    }
+
+    @Subscribe
+    public void onLocationEvent(LocationEvent event) {
+        String countryCode = event.getMessage();
+        if(countryCode != null) {
+            String tesseractFile = countryCodes.get(countryCode);
+            boolean supportedCountry = countryCodes.containsKey(countryCode);
+            boolean notAlreadyDownloaded = preferences.getBoolean(tesseractFile, false);
+            if(supportedCountry && notAlreadyDownloaded) {
+                OcrLanguageSupport.downloadTesseractData(tesseractFile);
+            }
         }
     }
 
