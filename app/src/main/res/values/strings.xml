@@ -44,6 +44,10 @@
     <string name="clear">Clear</string>
     <string name="backspace">Backspace</string>
     <string name="enter">Enter</string>
+    <string name="service_not_available">Service not available</string>
+    <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
+    <string name="no_address_found">No address found</string>
+    <string name="address_found">Address found</string>
     <string-array name="input_select">
         <item>ABC</item>
         <item>123</item>

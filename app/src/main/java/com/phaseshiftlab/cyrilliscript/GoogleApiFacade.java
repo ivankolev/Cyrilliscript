@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.icu.text.DateFormat;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.util.LogPrinter;
 
@@ -25,11 +27,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
+import com.phaseshiftlab.cyrilliscript.FetchAddressIntentService;
+import com.phaseshiftlab.cyrilliscript.FetchAddressIntentService.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -38,6 +43,9 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
     private GoogleApiClient mGoogleApiClient;
     private SoftKeyboard mSoftKeyboard;
     private Location mLocation;
+    private AddressResultReceiver mResultReceiver;
+    private HashMap<String, String> mAddressOutput;
+
 
     GoogleApiFacade() {
     }
@@ -112,12 +120,21 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
                 String longitude = String.valueOf(mLocation.getLongitude());
                 Log.d(TAG, latitude);
                 Log.d(TAG, longitude);
+                startIntentService();
             }
 
         } catch(SecurityException e) {
             requestPermissions();
         }
 
+    }
+
+    protected void startIntentService() {
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        Intent intent = new Intent(mSoftKeyboard, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLocation);
+        mSoftKeyboard.startService(intent);
     }
 
     @Subscribe
@@ -153,5 +170,26 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
         Log.d(TAG, "Received location");
         location.dump(new LogPrinter(Log.DEBUG, TAG), "location");
         mLocation = location;
+    }
+
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            mAddressOutput = (HashMap<String, String>) resultData.getSerializable(Constants.RESULT_DATA_KEY);
+
+            // Show a toast message if an address was found.
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                Log.d(TAG, mAddressOutput.get(Constants.FULL_ADDRESS));
+                Log.d(TAG + " country:", mAddressOutput.get(Constants.COUNTRY_CODE));
+            }
+
+        }
     }
 }
