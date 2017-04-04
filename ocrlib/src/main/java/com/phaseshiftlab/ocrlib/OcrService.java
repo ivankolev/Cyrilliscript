@@ -24,7 +24,9 @@ import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,6 +96,8 @@ public class OcrService extends Service {
 
     private SharedPreferences preferences;
 
+    private EventBus eventBus;
+
     private AssetManager assetManager;
 
     public OcrService() {
@@ -104,7 +108,7 @@ public class OcrService extends Service {
         Log.i(TAG, DATA_PATH);
         this.context = context;
         this.assetManager = context.getAssets();
-        this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
+        this.eventBus = EventBus.getDefault();
     }
 
     public class MyBinder extends Binder {
@@ -155,13 +159,16 @@ public class OcrService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "OcrService onCreate");
+        Log.d(TAG, "Ocr Service onCreate");
+        this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
+    }
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "Ocr Service onDestroy");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "OcrService onBind");
         try {
             initRequiredFiles();
         } catch (InterruptedException e) {
@@ -205,7 +212,7 @@ public class OcrService extends Service {
     }
 
     @Subscribe
-    void onPermissionEvent(PermissionEvent event) {
+    public void onPermissionEvent(PermissionEvent event) {
         if (event.getEventType() == PermissionEvent.GRANTED) {
             initialize();
         }

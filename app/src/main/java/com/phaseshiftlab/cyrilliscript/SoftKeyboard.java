@@ -1005,6 +1005,15 @@ public class SoftKeyboard extends InputMethodService
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         mGoogleApiFacade.disconnect();
+        if(mDrawingInputView != null) {
+            mDrawingInputView.onDetachedFromWindow();
+        }
+        if(mMainView != null) {
+            mMainView.setVisibility(View.GONE);
+        }
+        if(mCandidateView != null) {
+            mCandidateView.setVisibility(View.GONE);
+        }
     }
 
     @Override

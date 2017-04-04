@@ -65,11 +65,13 @@ public class MainWritingView extends View {
         public void onServiceConnected(ComponentName name, IBinder service) {
             OcrService.MyBinder binder = (OcrService.MyBinder) service;
             ocrService = binder.getService();
+            eventBus.register(ocrService);
             isBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            eventBus.unregister(ocrService);
             ocrService = null;
             isBound = false;
         }
@@ -154,6 +156,7 @@ public class MainWritingView extends View {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         eventBus.unregister(this);
+        this.getContext().unbindService(serviceConnection);
     }
 
     @Override

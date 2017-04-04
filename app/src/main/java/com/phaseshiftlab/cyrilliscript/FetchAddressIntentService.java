@@ -21,10 +21,6 @@ public class FetchAddressIntentService extends IntentService {
     private String TAG = "Cyrilliscript";
     protected ResultReceiver mReceiver;
 
-    public FetchAddressIntentService() {
-        super("FetchAddressIntentService");
-    }
-
     public FetchAddressIntentService(String name) {
         super(name);
     }
@@ -49,7 +45,6 @@ public class FetchAddressIntentService extends IntentService {
                 addresses = geocoder.getFromLocation(
                         location.getLatitude(),
                         location.getLongitude(),
-                        // In this sample, get just a single address.
                         1);
             }
         } catch (IOException ioException) {
