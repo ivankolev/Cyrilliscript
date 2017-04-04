@@ -92,7 +92,7 @@ public class OcrService extends Service {
     private static String digits = Alphabets.DIGITS.getAlphabet();
     private static String symbols = Alphabets.SYMBOLS.getAlphabet();
 
-    private SharedPreferences preferences = getSharedPreferences(TAG, MODE_PRIVATE);
+    private SharedPreferences preferences;
 
     private AssetManager assetManager;
 
@@ -104,6 +104,7 @@ public class OcrService extends Service {
         Log.i(TAG, DATA_PATH);
         this.context = context;
         this.assetManager = context.getAssets();
+        this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
     }
 
     public class MyBinder extends Binder {
@@ -186,6 +187,7 @@ public class OcrService extends Service {
     }
 
     public void saveThresholdImage() {
+        Log.d(TAG, "Will try to save thresholdImage to file...");
         try {
             Pix rawImage = baseAPI.getThresholdedImage();
             Bitmap thresholdImage = WriteFile.writeBitmap(rawImage);
