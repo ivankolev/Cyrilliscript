@@ -192,7 +192,7 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
                 String fullAddress = mAddressOutput.get(Constants.FULL_ADDRESS);
                 String countryCode = mAddressOutput.get(Constants.COUNTRY_CODE);
                 Log.d(TAG, fullAddress);
-                Log.d(TAG + " country:", countryCode);
+                Log.d(TAG + " country", countryCode);
                 eventBus.post(new LocationEvent(countryCode));
             }
 

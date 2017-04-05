@@ -21,6 +21,9 @@ public class FetchAddressIntentService extends IntentService {
     private String TAG = "Cyrilliscript";
     protected ResultReceiver mReceiver;
 
+    public FetchAddressIntentService() {
+        super("FetchAddressIntentService");
+    }
     public FetchAddressIntentService(String name) {
         super(name);
     }

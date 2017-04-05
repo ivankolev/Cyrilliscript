@@ -85,8 +85,7 @@ public class OcrService extends Service {
     private TessBaseAPI baseAPI;
     private IBinder myBinder = new MyBinder();
     private static final String TAG = "Cyrilliscript";
-    private static final String DATA_PATH = Environment
-            .getExternalStorageDirectory().toString() + "/TesseractOCR/";
+    private static final String DATA_PATH = OcrLanguageSupport.DATA_PATH;
 
     private static String lang = TesseractFiles.BG.getLanguage();
     private static String langFile = TesseractFiles.BG.getFileName();
@@ -117,45 +116,7 @@ public class OcrService extends Service {
         }
     }
 
-    private void prepareTrainedDataFiles() throws InterruptedException {
-        String[] paths = new String[]{DATA_PATH, DATA_PATH + "/tessdata"};
 
-        for (String path : paths) {
-            File dir = new File(path);
-            if (!dir.exists()) {
-                if (!dir.mkdirs()) {
-                    Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
-                    return;
-                } else {
-                    Log.v(TAG, "Created directory " + path + " on sdcard");
-                }
-            }
-        }
-
-        if (!(new File(DATA_PATH + "tessdata/" + langFile)).exists()) {
-            try {
-                Log.v(TAG, "Opening .traineddata asset");
-                copyTrainedDataFile();
-                preferences.edit().putBoolean(lang, true).apply();
-                Log.v(TAG, "Copied " + langFile);
-            } catch (IOException e) {
-                Log.e(TAG, "Was unable to copy " + langFile + " " + e.toString());
-            }
-        }
-    }
-
-    private void copyTrainedDataFile() throws IOException {
-        InputStream in = context.getAssets().open("tessdata/" + langFile);
-        OutputStream out = new FileOutputStream(new File(DATA_PATH + "tessdata/", langFile));
-
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) != -1) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
 
     @Override
     public void onCreate() {
@@ -221,10 +182,14 @@ public class OcrService extends Service {
     @Subscribe
     public void onLocationEvent(LocationEvent event) {
         String countryCode = event.getMessage();
+        Log.d(TAG, "received onLocationEvent " + countryCode);
         if(countryCode != null) {
             String tesseractFile = countryCodes.get(countryCode);
+            Log.d(TAG, "tesseractFile is " + tesseractFile);
             boolean supportedCountry = countryCodes.containsKey(countryCode);
-            boolean notAlreadyDownloaded = preferences.getBoolean(tesseractFile, false);
+            Log.d(TAG, "supportedCountry is " + supportedCountry);
+            boolean notAlreadyDownloaded = !preferences.getBoolean(tesseractFile, false);
+            Log.d(TAG, "notAlreadyDownloaded is " + notAlreadyDownloaded);
             if(supportedCountry && notAlreadyDownloaded) {
                 OcrLanguageSupport.downloadTesseractData(tesseractFile);
             }
@@ -233,7 +198,7 @@ public class OcrService extends Service {
 
     private void initialize() {
         try {
-            prepareTrainedDataFiles();
+            OcrLanguageSupport.prepareTrainedDataFiles(context, langFile, lang);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
