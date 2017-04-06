@@ -48,6 +48,9 @@ public class OcrLanguageSupport {
                             boolean writtenToDisk = writeResponseBodyToDisk(response.body(), tesseractFile);
 
                             Log.d(TAG, "file download was a success? " + writtenToDisk);
+                            if(writtenToDisk) {
+                                preferences.edit().putBoolean(tesseractFile, true).apply();
+                            }
                             return null;
                         }
                     }.execute();
