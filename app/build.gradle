@@ -6,6 +6,7 @@ android {
         applicationId "com.phaseshiftlab.cyrilliscript"
         minSdkVersion 22
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -32,4 +33,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:10.2.1'
     compile 'com.google.android.gms:play-services-location:10.2.1'
     compile 'com.android.support:support-vector-drawable:25.3.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
