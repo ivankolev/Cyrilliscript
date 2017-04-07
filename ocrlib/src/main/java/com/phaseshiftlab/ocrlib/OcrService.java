@@ -1,8 +1,12 @@
 package com.phaseshiftlab.ocrlib;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,9 +16,10 @@ import android.os.Binder;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.googlecode.leptonica.android.Pix;
@@ -26,18 +31,18 @@ import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class OcrService extends Service {
+
+    private int mId = 1001;
 
     private enum Alphabets {
         BG_CYRILLIC("АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя"),
@@ -60,6 +65,7 @@ public class OcrService extends Service {
         EN("eng");
 
         private String language;
+
         TesseractFiles(String language) {
             this.language = language;
         }
@@ -93,8 +99,8 @@ public class OcrService extends Service {
     private static String digits = Alphabets.DIGITS.getAlphabet();
     private static String symbols = Alphabets.SYMBOLS.getAlphabet();
 
+    private String tesseractFile;
     private SharedPreferences preferences;
-
     private EventBus eventBus;
 
     private AssetManager assetManager;
@@ -117,12 +123,12 @@ public class OcrService extends Service {
     }
 
 
-
     @Override
     public void onCreate() {
         Log.d(TAG, "Ocr Service onCreate");
         this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
     }
+
     @Override
     public void onDestroy() {
         Log.d(TAG, "Ocr Service onDestroy");
@@ -183,17 +189,39 @@ public class OcrService extends Service {
     public void onLocationEvent(LocationEvent event) {
         String countryCode = event.getMessage();
         Log.d(TAG, "received onLocationEvent " + countryCode);
-        if(countryCode != null) {
-            String tesseractFile = countryCodes.get(countryCode);
+        if (countryCode != null) {
+            tesseractFile = countryCodes.get(countryCode);
             Log.d(TAG, "tesseractFile is " + tesseractFile);
             boolean supportedCountry = countryCodes.containsKey(countryCode);
             Log.d(TAG, "supportedCountry is " + supportedCountry);
             boolean notAlreadyDownloaded = !preferences.getBoolean(tesseractFile, false);
             Log.d(TAG, "notAlreadyDownloaded is " + notAlreadyDownloaded);
-            if(supportedCountry && notAlreadyDownloaded) {
-                OcrLanguageSupport.downloadTesseractData(tesseractFile);
+            if (supportedCountry && notAlreadyDownloaded) {
+                android.support.v4.app.NotificationCompat.Builder mBuilder =
+                        new Builder(this)
+                                .setSmallIcon(R.drawable.ic_archive_black_24dp)
+                                .setContentTitle("Download file")
+                                .setContentText("Tap to download trained data file for " + tesseractFile);
+                Intent resultIntent = new Intent(this, OcrService.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addParentStack(PermissionRequestActivity.class);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent = PendingIntent.getService(context, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT);
+                mBuilder.setContentIntent(resultPendingIntent);
+                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(mId, mBuilder.build());
             }
         }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        Log.d(TAG, "Intent received");
+        OcrLanguageSupport.downloadTesseractData(context, tesseractFile);
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(mId);
+        return START_STICKY;
     }
 
     private void initialize() {

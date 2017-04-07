@@ -1,9 +1,13 @@
 package com.phaseshiftlab.ocrlib;
 
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -32,9 +36,9 @@ public class OcrLanguageSupport {
             .getExternalStorageDirectory().toString() + "/TesseractOCR/";
     private static SharedPreferences preferences;
 
-    public static void downloadTesseractData(final String tesseractFile) {
+    public static void downloadTesseractData(final Context context, final String tesseractFile) {
         Log.d(TAG, "attempt to download " + tesseractFile);
-
+        promptToDownload(context, tesseractFile);
         Call<ResponseBody> call = client.tessDataFile(tesseractFile);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -49,6 +53,14 @@ public class OcrLanguageSupport {
 
                             Log.d(TAG, "file download was a success? " + writtenToDisk);
                             if(writtenToDisk) {
+                                android.support.v4.app.NotificationCompat.Builder mBuilder =
+                                        new NotificationCompat.Builder(context)
+                                                .setSmallIcon(R.drawable.ic_check_box_black_24dp)
+                                                .setContentTitle("Download success")
+                                                .setContentText("You can now switch between languages in Cyrilliscript");
+                                NotificationManager mNotificationManager =
+                                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                                mNotificationManager.notify(0, mBuilder.build());
                                 preferences.edit().putBoolean(tesseractFile, true).apply();
                             }
                             return null;
@@ -65,6 +77,10 @@ public class OcrLanguageSupport {
                 Log.e(TAG, "error");
             }
         });
+    }
+
+    private static void promptToDownload(Context context, String tesseractFile) {
+
     }
 
 
