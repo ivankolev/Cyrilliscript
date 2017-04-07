@@ -12,9 +12,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +35,31 @@ public class PermissionRequestActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.phaseshiftlab.ocrlib.R.layout.activity_soft_keyboard);
-        installedLanguagesList = (ListView) findViewById(com.phaseshiftlab.ocrlib.R.id.installedLanguages);
-        List<String> list = getLanguageListFromPrefs();
 
         eventBus = EventBus.getDefault();
+        eventBus.register(this);
+
         requestAppPermissions();
+        initInstalledLanguagesList();
+    }
+
+    private void initInstalledLanguagesList() {
+        installedLanguagesList = (ListView) findViewById(com.phaseshiftlab.ocrlib.R.id.installedLanguages);
+
+        List<String> list = getLanguageListFromPrefs();
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 list);
 
         installedLanguagesList.setAdapter(arrayAdapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
     }
 
     private void requestAppPermissions() {
@@ -74,6 +91,14 @@ public class PermissionRequestActivity extends Activity {
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDownloadSuccessEvent(DownloadSuccessEvent event) {
+        String message = event.getMessage();
+        if(message != null && message.equals("SUCCESS")) {
+            initInstalledLanguagesList();
+        }
+    }
 
 
     public void launchLanguageAndInputSettings(View view) {

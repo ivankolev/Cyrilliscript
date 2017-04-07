@@ -137,7 +137,9 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
     @Subscribe
     public void onPermissionEvent(PermissionEvent event) {
         if(event.getEventType() == PermissionEvent.GRANTED) {
-            getLocation();
+            if(mGoogleApiClient.isConnected()) {
+                getLocation();
+            }
         }
     }
 

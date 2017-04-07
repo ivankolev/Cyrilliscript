@@ -9,10 +9,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.LanguageChangeEvent;
 import com.phaseshiftlab.ocrlib.PermissionRequestActivity;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -41,6 +45,7 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if(!this.isInEditMode()){
+            EventBus.getDefault().register(this);
             initInputSelectSpinner();
             initLangguageSelectSpinner();
         }
@@ -58,12 +63,22 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
         }
 
     }
-//
-//    @Override
-//    protected void onDetachedFromWindow() {
-//        super.onDetachedFromWindow();
-//        EventBus.getDefault().unregister(this);
-//    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDownloadSuccessEvent(DownloadSuccessEvent event) {
+        String message = event.getMessage();
+        if(message != null && message.equals("SUCCESS")) {
+            initLangguageSelectSpinner();
+        }
+    }
+
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(this);
+    }
 
     private void initInputSelectSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.inputSelect);
@@ -81,7 +96,15 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        EventBus.getDefault().post(new InputSelectChangedEvent(position));
+        switch (parent.getId()) {
+            case R.id.inputSelect:
+                EventBus.getDefault().post(new InputSelectChangedEvent(position));
+                break;
+            case R.id.languageSelect:
+                EventBus.getDefault().post(new LanguageChangeEvent(position));
+                break;
+
+        }
     }
 
     @Override

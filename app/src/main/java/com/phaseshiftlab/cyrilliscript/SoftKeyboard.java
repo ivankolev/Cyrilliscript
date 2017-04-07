@@ -38,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.facebook.stetho.Stetho;
+import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.WritingViewEvent;

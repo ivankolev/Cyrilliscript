@@ -21,6 +21,7 @@ import android.util.Log;
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.phaseshiftlab.cyrilliscript.eventslib.LanguageChangeEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 
@@ -104,9 +105,18 @@ public class OcrService extends Service {
         OcrService.langFile = langFile;
     }
 
+    public static String getLetters() {
+        return letters;
+    }
+
+    public static void setLetters(String letters) {
+        OcrService.letters = letters;
+    }
+
     private static String lang;
     private static String langFile;
-    private static String letters = Alphabets.BG_CYRILLIC.getAlphabet();
+
+    private static String letters;
     private static String digits = Alphabets.DIGITS.getAlphabet();
     private static String symbols = Alphabets.SYMBOLS.getAlphabet();
 
@@ -135,6 +145,7 @@ public class OcrService extends Service {
         this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
         setLang(TesseractFiles.BG.getLanguage());
         setLangFile(TesseractFiles.BG.getFileName());
+        setLetters(Alphabets.BG_CYRILLIC.getAlphabet());
     }
 
     @Override
@@ -191,6 +202,20 @@ public class OcrService extends Service {
         if (event.getEventType() == PermissionEvent.GRANTED) {
             initialize();
         }
+    }
+
+    @Subscribe
+    public void onLanguageChangeEvent(LanguageChangeEvent event) {
+        if(event.getEventType() == LanguageChangeEvent.BG) {
+            setLang(TesseractFiles.BG.getLanguage());
+            setLangFile(TesseractFiles.BG.getFileName());
+            setLetters(Alphabets.BG_CYRILLIC.getAlphabet());
+        } else if(event.getEventType() == LanguageChangeEvent.EN) {
+            setLang(TesseractFiles.EN.getLanguage());
+            setLangFile(TesseractFiles.EN.getFileName());
+            setLetters(Alphabets.EN_LATIN.getAlphabet());
+        }
+        initTesseractAPI();
     }
 
     @Subscribe
@@ -256,18 +281,18 @@ public class OcrService extends Service {
     }
 
     public void setLettersWhitelist() {
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, letters);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, getLetters());
         baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, digits + symbols);
     }
 
     public void setDigitsWhitelist() {
         baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, digits);
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, letters + symbols);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, getLetters() + symbols);
     }
 
     public void setSymbolsWhitelist() {
         baseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, symbols);
-        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, letters + digits);
+        baseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, getLetters() + digits);
     }
 
 

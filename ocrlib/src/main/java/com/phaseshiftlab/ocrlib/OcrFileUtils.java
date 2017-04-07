@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 
+import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,6 +55,7 @@ public class OcrFileUtils {
                 Log.v(TAG, "Opening .traineddata asset");
                 copyTrainedDataFile(context, langFile);
                 preferences.edit().putBoolean(lang, true).apply();
+                EventBus.getDefault().post(new DownloadSuccessEvent("SUCCESS"));
                 Log.v(TAG, "Copied " + langFile);
             } catch (IOException e) {
                 Log.e(TAG, "Was unable to copy " + langFile + " " + e.toString());

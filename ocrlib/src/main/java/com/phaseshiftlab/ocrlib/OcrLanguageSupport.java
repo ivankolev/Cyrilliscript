@@ -1,20 +1,15 @@
 package com.phaseshiftlab.ocrlib;
 
-import android.app.AlertDialog;
 import android.app.NotificationManager;
-import android.content.DialogInterface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -32,7 +27,6 @@ public class OcrLanguageSupport {
     private static Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL);
     private static Retrofit retrofit = builder.client(httpClient.build()).build();
     private static GitHubTessdataInterface client = retrofit.create(GitHubTessdataInterface.class);
-    private static SharedPreferences preferences;
 
     public static void downloadTesseractData(final Context context, final String tesseractFile) {
         Log.d(TAG, "attempt to download " + tesseractFile);
@@ -59,6 +53,7 @@ public class OcrLanguageSupport {
                                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                                 mNotificationManager.notify(0, mBuilder.build());
                                 preferences.edit().putBoolean(tesseractFile, true).apply();
+                                EventBus.getDefault().post(new DownloadSuccessEvent("SUCCESS"));
                             }
                             return null;
                         }
