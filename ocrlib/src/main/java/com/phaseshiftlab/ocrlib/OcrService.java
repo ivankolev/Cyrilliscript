@@ -215,6 +215,7 @@ public class OcrService extends Service {
             setLangFile(TesseractFiles.EN.getFileName());
             setLetters(Alphabets.EN_LATIN.getAlphabet());
         }
+        baseAPI.end();
         initTesseractAPI();
     }
 

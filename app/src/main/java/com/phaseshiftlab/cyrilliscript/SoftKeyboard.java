@@ -908,6 +908,7 @@ public class SoftKeyboard extends InputMethodService
     public void setSuggestions(List<String> suggestions, boolean completions,
                                boolean typedWordValid) {
         if (suggestions != null && suggestions.size() > 0) {
+            mSuggestionList = new ArrayList<>(suggestions);
             setCandidatesViewShown(true);
         } else if (isExtractViewShown()) {
             setCandidatesViewShown(true);
