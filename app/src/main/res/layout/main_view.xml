@@ -56,7 +56,7 @@
         android:layout_height="36dp"
         android:drawableStart="@drawable/ic_keyboard_return_black_24dp"
         android:onClick="sendEnter"
-        app:layout_constraintLeft_toRightOf="@+id/spaceButton"
+        app:layout_constraintLeft_toRightOf="@+id/undoButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/clearButton"
         tools:layout_constraintLeft_creator="1" />
     <Spinner

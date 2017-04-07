@@ -115,15 +115,16 @@ public class MainWritingView extends View {
     @Subscribe
     public void onInputSelectChangedEvent(InputSelectChangedEvent event) {
         int inputSelected = event.getEventType();
-        if (inputSelected == InputSelectChangedEvent.LETTERS) {
-            ocrService.setLettersWhitelist();
+        if(ocrService != null) {
+            if (inputSelected == InputSelectChangedEvent.LETTERS) {
+                ocrService.setLettersWhitelist();
 
-        } else if (inputSelected == InputSelectChangedEvent.DIGITS) {
-            ocrService.setDigitsWhitelist();
+            } else if (inputSelected == InputSelectChangedEvent.DIGITS) {
+                ocrService.setDigitsWhitelist();
 
-        } else if (inputSelected == InputSelectChangedEvent.SYMBOLS) {
-            ocrService.setSymbolsWhitelist();
-
+            } else if (inputSelected == InputSelectChangedEvent.SYMBOLS) {
+                ocrService.setSymbolsWhitelist();
+            }
         }
     }
 

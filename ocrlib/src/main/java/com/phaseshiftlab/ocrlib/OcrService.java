@@ -1,25 +1,21 @@
 package com.phaseshiftlab.ocrlib;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.googlecode.leptonica.android.Pix;
@@ -27,9 +23,7 @@ import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
-import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
@@ -60,6 +54,7 @@ public class OcrService extends Service {
         }
     }
 
+    //TODO move this to OcrFileUtils.java
     private enum TesseractFiles {
         BG("bul"),
         EN("eng");
@@ -91,29 +86,40 @@ public class OcrService extends Service {
     private TessBaseAPI baseAPI;
     private IBinder myBinder = new MyBinder();
     private static final String TAG = "Cyrilliscript";
-    private static final String DATA_PATH = OcrLanguageSupport.DATA_PATH;
+    private static final String DATA_PATH = OcrFileUtils.getDataPath();
 
-    private static String lang = TesseractFiles.BG.getLanguage();
-    private static String langFile = TesseractFiles.BG.getFileName();
+    public static String getLang() {
+        return lang;
+    }
+
+    public static void setLang(String lang) {
+        OcrService.lang = lang;
+    }
+
+    public static String getLangFile() {
+        return langFile;
+    }
+
+    public static void setLangFile(String langFile) {
+        OcrService.langFile = langFile;
+    }
+
+    private static String lang;
+    private static String langFile;
     private static String letters = Alphabets.BG_CYRILLIC.getAlphabet();
     private static String digits = Alphabets.DIGITS.getAlphabet();
     private static String symbols = Alphabets.SYMBOLS.getAlphabet();
 
-    private String tesseractFile;
+    private String tesseractFilePrefix;
     private SharedPreferences preferences;
-    private EventBus eventBus;
 
-    private AssetManager assetManager;
 
     public OcrService() {
         context = this;
     }
 
     public OcrService(Context context) {
-        Log.i(TAG, DATA_PATH);
         this.context = context;
-        this.assetManager = context.getAssets();
-        this.eventBus = EventBus.getDefault();
     }
 
     public class MyBinder extends Binder {
@@ -127,6 +133,8 @@ public class OcrService extends Service {
     public void onCreate() {
         Log.d(TAG, "Ocr Service onCreate");
         this.preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
+        setLang(TesseractFiles.BG.getLanguage());
+        setLangFile(TesseractFiles.BG.getFileName());
     }
 
     @Override
@@ -190,18 +198,18 @@ public class OcrService extends Service {
         String countryCode = event.getMessage();
         Log.d(TAG, "received onLocationEvent " + countryCode);
         if (countryCode != null) {
-            tesseractFile = countryCodes.get(countryCode);
-            Log.d(TAG, "tesseractFile is " + tesseractFile);
+            tesseractFilePrefix = countryCodes.get(countryCode);
+            Log.d(TAG, "tesseractFilePrefix is " + tesseractFilePrefix);
             boolean supportedCountry = countryCodes.containsKey(countryCode);
             Log.d(TAG, "supportedCountry is " + supportedCountry);
-            boolean notAlreadyDownloaded = !preferences.getBoolean(tesseractFile, false);
+            boolean notAlreadyDownloaded = !preferences.getBoolean(tesseractFilePrefix, false);
             Log.d(TAG, "notAlreadyDownloaded is " + notAlreadyDownloaded);
             if (supportedCountry && notAlreadyDownloaded) {
                 android.support.v4.app.NotificationCompat.Builder mBuilder =
                         new Builder(this)
                                 .setSmallIcon(R.drawable.ic_archive_black_24dp)
                                 .setContentTitle("Download file")
-                                .setContentText("Tap to download trained data file for " + tesseractFile);
+                                .setContentText("Tap to download trained data file for " + tesseractFilePrefix);
                 Intent resultIntent = new Intent(this, OcrService.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(PermissionRequestActivity.class);
@@ -218,7 +226,7 @@ public class OcrService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "Intent received");
-        OcrLanguageSupport.downloadTesseractData(context, tesseractFile);
+        OcrLanguageSupport.downloadTesseractData(context, tesseractFilePrefix);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(mId);
         return START_STICKY;
@@ -226,7 +234,7 @@ public class OcrService extends Service {
 
     private void initialize() {
         try {
-            OcrLanguageSupport.prepareTrainedDataFiles(context, langFile, lang);
+            OcrFileUtils.prepareTrainedDataFiles(context, getLangFile(), getLang());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -266,7 +274,7 @@ public class OcrService extends Service {
     private void initTesseractAPI() {
         baseAPI = new TessBaseAPI();
         baseAPI.setDebug(true);
-        baseAPI.init(DATA_PATH, lang);
+        baseAPI.init(DATA_PATH, getLang());
         baseAPI.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_WORD);
         setLettersWhitelist();
     }

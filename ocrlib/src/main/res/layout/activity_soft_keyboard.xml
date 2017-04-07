@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity">
+    tools:context="com.phaseshiftlab.ocrlib.PermissionRequestActivity">
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
     <ListView
         android:id="@+id/installedLanguages"
         android:layout_width="0dp"
-        android:layout_height="260dp"
+        android:layout_height="160dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

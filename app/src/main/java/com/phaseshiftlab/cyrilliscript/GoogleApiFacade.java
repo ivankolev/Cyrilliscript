@@ -1,12 +1,8 @@
 package com.phaseshiftlab.cyrilliscript;
 
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.icu.text.DateFormat;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,14 +23,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
-import com.phaseshiftlab.cyrilliscript.eventslib.PermissionRequestActivity;
-import com.phaseshiftlab.cyrilliscript.FetchAddressIntentService;
+import com.phaseshiftlab.ocrlib.PermissionRequestActivity;
 import com.phaseshiftlab.cyrilliscript.FetchAddressIntentService.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.Date;
 import java.util.HashMap;
 
 

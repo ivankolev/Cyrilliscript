@@ -32,24 +32,21 @@ public class OcrLanguageSupport {
     private static Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL);
     private static Retrofit retrofit = builder.client(httpClient.build()).build();
     private static GitHubTessdataInterface client = retrofit.create(GitHubTessdataInterface.class);
-    static final String DATA_PATH = Environment
-            .getExternalStorageDirectory().toString() + "/TesseractOCR/";
     private static SharedPreferences preferences;
 
     public static void downloadTesseractData(final Context context, final String tesseractFile) {
         Log.d(TAG, "attempt to download " + tesseractFile);
-        promptToDownload(context, tesseractFile);
         Call<ResponseBody> call = client.tessDataFile(tesseractFile);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "server contacted and has file");
-
+                    final SharedPreferences preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            boolean writtenToDisk = writeResponseBodyToDisk(response.body(), tesseractFile);
+                            boolean writtenToDisk = OcrFileUtils.writeResponseBodyToDisk(response.body(), tesseractFile);
 
                             Log.d(TAG, "file download was a success? " + writtenToDisk);
                             if(writtenToDisk) {
@@ -77,103 +74,5 @@ public class OcrLanguageSupport {
                 Log.e(TAG, "error");
             }
         });
-    }
-
-    private static void promptToDownload(Context context, String tesseractFile) {
-
-    }
-
-
-    static void prepareTrainedDataFiles(Context context, String langFile, String lang) throws InterruptedException {
-        preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
-        String[] paths = new String[]{DATA_PATH, DATA_PATH + "/tessdata"};
-
-        for (String path : paths) {
-            File dir = new File(path);
-            if (!dir.exists()) {
-                if (!dir.mkdirs()) {
-                    Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
-                    return;
-                } else {
-                    Log.v(TAG, "Created directory " + path + " on sdcard");
-                }
-            }
-        }
-
-        if (!(new File(DATA_PATH + "tessdata/" + langFile)).exists()) {
-            try {
-                Log.v(TAG, "Opening .traineddata asset");
-                copyTrainedDataFile(context, langFile);
-                preferences.edit().putBoolean(lang, true).apply();
-                Log.v(TAG, "Copied " + langFile);
-            } catch (IOException e) {
-                Log.e(TAG, "Was unable to copy " + langFile + " " + e.toString());
-            }
-        }
-    }
-
-    private static void copyTrainedDataFile(Context context, String langFile) throws IOException {
-        InputStream in = context.getAssets().open("tessdata/" + langFile);
-        OutputStream out = new FileOutputStream(new File(DATA_PATH + "tessdata/", langFile));
-
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) != -1) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
-
-
-
-    private static boolean writeResponseBodyToDisk(ResponseBody body, String tesseractFile) {
-        try {
-            // todo change the file location/name according to your needs
-            File futureStudioIconFile = new File(DATA_PATH + "tessdata/" + tesseractFile + ".traineddata");
-
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-
-            try {
-                byte[] fileReader = new byte[4096];
-
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
-
-                inputStream = body.byteStream();
-                outputStream = new FileOutputStream(futureStudioIconFile);
-
-                while (true) {
-                    int read = inputStream.read(fileReader);
-
-                    if (read == -1) {
-                        break;
-                    }
-
-                    outputStream.write(fileReader, 0, read);
-
-                    fileSizeDownloaded += read;
-
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
-                }
-
-                outputStream.flush();
-
-                return true;
-            } catch (IOException e) {
-                return false;
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            }
-        } catch (IOException e) {
-            return false;
-        }
     }
 }

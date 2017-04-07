@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.phaseshiftlab.cyrilliscript.test">
+    package="com.phaseshiftlab.cyrilliscript.test" >
 
-    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
+    <uses-sdk
+        android:minSdkVersion="23"
+        android:targetSdkVersion="23" />
+
+    <instrumentation
+        android:name="android.support.test.runner.AndroidJUnitRunner"
+        android:functionalTest="false"
+        android:handleProfiling="false"
+        android:label="Tests for com.phaseshiftlab.cyrilliscript"
+        android:targetPackage="com.phaseshiftlab.cyrilliscript" />
 
     <application>
         <uses-library android:name="android.test.runner" />
     </application>
 
-    <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="com.phaseshiftlab.cyrilliscript"
-                     android:handleProfiling="false"
-                     android:functionalTest="false"
-                     android:label="Tests for com.phaseshiftlab.cyrilliscript"/>
 </manifest>

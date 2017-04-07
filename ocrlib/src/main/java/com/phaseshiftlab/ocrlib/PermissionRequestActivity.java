@@ -1,4 +1,4 @@
-package com.phaseshiftlab.cyrilliscript.eventslib;
+package com.phaseshiftlab.ocrlib;
 
 import android.Manifest;
 import android.app.Activity;
@@ -6,11 +6,12 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,8 +30,8 @@ public class PermissionRequestActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_soft_keyboard);
-        installedLanguagesList = (ListView) findViewById(R.id.installedLanguages);
+        setContentView(com.phaseshiftlab.ocrlib.R.layout.activity_soft_keyboard);
+        installedLanguagesList = (ListView) findViewById(com.phaseshiftlab.ocrlib.R.id.installedLanguages);
         List<String> list = getLanguageListFromPrefs();
 
         eventBus = EventBus.getDefault();
@@ -44,7 +45,7 @@ public class PermissionRequestActivity extends Activity {
     }
 
     private void requestAppPermissions() {
-        ActivityCompat.requestPermissions(this,
+        this.requestPermissions(
                 new String[]{
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -71,6 +72,8 @@ public class PermissionRequestActivity extends Activity {
             // permissions this app might request
         }
     }
+
+
 
     public void launchLanguageAndInputSettings(View view) {
         Intent intent = new Intent();
@@ -99,6 +102,7 @@ public class PermissionRequestActivity extends Activity {
                 if(!language.equals("")) {
                     String isItInstalled = (Boolean) pref ? "installed" : "not installed";
                     printVal = language + ": " + isItInstalled;
+                    Boolean doesFileExist = OcrFileUtils.tesseractTraineddataFileExist(language + ".traineddata");
                     languagesList.add(printVal);
                 }
             }
