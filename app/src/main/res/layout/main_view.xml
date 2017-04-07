@@ -66,7 +66,7 @@
         android:background="@android:drawable/btn_default_small"
         app:layout_constraintBaseline_toBaselineOf="@+id/clearButton"
         android:layout_marginEnd="8dp"
-        app:layout_constraintRight_toRightOf="@+id/languageSelect" />
+        app:layout_constraintRight_toLeftOf="@+id/languageSelect" />
     <Spinner
         android:id="@+id/languageSelect"
         android:layout_width="wrap_content"

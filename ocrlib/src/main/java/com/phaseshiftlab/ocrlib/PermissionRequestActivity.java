@@ -3,6 +3,7 @@ package com.phaseshiftlab.ocrlib;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -82,8 +83,36 @@ public class PermissionRequestActivity extends Activity {
         intent.setComponent(com); startActivity(intent);
     }
 
+    public static List<String> getInstalledLanguagesFromPrefs(Context context) {
+        Map<String, ?> prefs = context.getSharedPreferences(TAG, MODE_PRIVATE).getAll();
+
+        List<String> installedLanguages = new ArrayList<>();
+
+        for (String key : prefs.keySet()) {
+            Object pref = prefs.get(key);
+            if (pref instanceof Boolean) {
+                String language = "";
+                if(key.equals("bul")) {
+                    language = "BG";
+                } else if(key.equals("eng")) {
+                    language = "EN";
+                }
+
+                if(!language.equals("")) {
+                    Boolean fileExist = OcrFileUtils.tesseractTraineddataFileExist(key + ".traineddata");
+                    if(!fileExist && (Boolean) pref ) {
+                        context.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, true).apply();
+                    } else if(fileExist) {
+                        installedLanguages.add(language);
+                    }
+                }
+            }
+        }
+
+        return installedLanguages;
+    }
+
     public List<String> getLanguageListFromPrefs() {
-        Log.d(TAG, "Loading preferences");
         Map<String, ?> prefs = this.getSharedPreferences(TAG, MODE_PRIVATE).getAll();
 
         List<String> languagesList = new ArrayList<>();
@@ -101,8 +130,12 @@ public class PermissionRequestActivity extends Activity {
 
                 if(!language.equals("")) {
                     String isItInstalled = (Boolean) pref ? "installed" : "not installed";
+                    Boolean fileExist = OcrFileUtils.tesseractTraineddataFileExist(key + ".traineddata");
+                    if(!fileExist && (Boolean) pref ) {
+                        this.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, false).apply();
+                        isItInstalled = "not installed";
+                    }
                     printVal = language + ": " + isItInstalled;
-                    Boolean doesFileExist = OcrFileUtils.tesseractTraineddataFileExist(language + ".traineddata");
                     languagesList.add(printVal);
                 }
             }

@@ -10,23 +10,31 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
+import com.phaseshiftlab.ocrlib.PermissionRequestActivity;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 /**
  * TODO: document your custom view class.
  */
 public class MainView extends ConstraintLayout implements AdapterView.OnItemSelectedListener {
+    private final Context context;
+
     public MainView(Context context) {
         super(context);
+        this.context = context;
     }
 
     public MainView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
     }
 
     public MainView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.context = context;
     }
 
     @Override
@@ -34,7 +42,21 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
         super.onAttachedToWindow();
         if(!this.isInEditMode()){
             initInputSelectSpinner();
+            initLangguageSelectSpinner();
         }
+    }
+
+    private void initLangguageSelectSpinner() {
+        Spinner spinner = (Spinner) findViewById(R.id.languageSelect);
+        List<String> installedLanguages = PermissionRequestActivity.getInstalledLanguagesFromPrefs(context);
+        if(installedLanguages.size() > 1) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, installedLanguages);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(this);
+            spinner.setVisibility(VISIBLE);
+        }
+
     }
 //
 //    @Override
