@@ -234,8 +234,8 @@ public class OcrService extends Service {
                 android.support.v4.app.NotificationCompat.Builder mBuilder =
                         new Builder(this)
                                 .setSmallIcon(R.drawable.ic_archive_black_24dp)
-                                .setContentTitle("Download file")
-                                .setContentText("Tap to download trained data file for " + tesseractFilePrefix);
+                                .setContentTitle(getString(R.string.download_file))
+                                .setContentText(getString(R.string.suggest_download));
                 Intent resultIntent = new Intent(this, OcrService.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(PermissionRequestActivity.class);
