@@ -65,13 +65,17 @@ public class MainWritingView extends View {
         public void onServiceConnected(ComponentName name, IBinder service) {
             OcrService.MyBinder binder = (OcrService.MyBinder) service;
             ocrService = binder.getService();
-            eventBus.register(ocrService);
-            isBound = true;
+            if(ocrService != null) {
+                eventBus.register(ocrService);
+                isBound = true;
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            eventBus.unregister(ocrService);
+            if(ocrService != null && eventBus != null) {
+                eventBus.unregister(ocrService);
+            }
             ocrService = null;
             isBound = false;
         }
