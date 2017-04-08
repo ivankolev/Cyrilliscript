@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Cyrilliscript.iml" filepath="$PROJECT_DIR$/Cyrilliscript.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eventslib/eventslib.iml" filepath="$PROJECT_DIR$/eventslib/eventslib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/languagelib/languagelib.iml" filepath="$PROJECT_DIR$/languagelib/languagelib.iml" />
       <module fileurl="file://$PROJECT_DIR$/ocrlib/ocrlib.iml" filepath="$PROJECT_DIR$/ocrlib/ocrlib.iml" />
     </modules>
   </component>
