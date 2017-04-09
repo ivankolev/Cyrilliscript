@@ -21,6 +21,14 @@
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
+        <service android:name=".statswidget.StatsWidgetService" />
+        <receiver android:name=".statswidget.StatsWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
         <service
             android:name=".FetchAddressIntentService"
             android:exported="false"/>
