@@ -48,6 +48,7 @@
     <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
     <string name="no_address_found">No address found</string>
     <string name="address_found">Address found</string>
+    <string name="cyrilliscript_statistics">Cyrilliscript Statistics</string>
     <string-array name="input_select">
         <item>ABC</item>
         <item>123</item>

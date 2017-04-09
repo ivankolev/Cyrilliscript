@@ -3,18 +3,34 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dip"
-    android:background="@drawable/widgetshape" >
+    android:layout_margin="4dp"
+    android:background="@drawable/widgetshape"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/update"
-        style="@android:style/TextAppearance.Medium"
+        android:textColor="@color/white"
+        android:id="@+id/widget_title"
+        style="@android:style/TextAppearance.Small"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal|center_vertical"
-        android:layout_margin="4dip"
-        android:text="Static Text" >
-    </TextView>
+        android:layout_height="20dp"
+        android:layout_marginTop="@dimen/widget_margin"
+        android:layout_marginStart="@dimen/widget_margin"
+        android:text="@string/cyrilliscript_statistics"/>
+
+    <TextView
+        android:textColor="@color/white"
+        android:id="@+id/m_c_events_totals"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/widget_margin"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:textColor="@color/white"
+        android:id="@+id/m_c_events_avg"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/widget_margin"
+        android:layout_height="20dp" />
 
 </LinearLayout>

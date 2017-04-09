@@ -184,9 +184,9 @@ public class OcrService extends Service {
         Integer i = 0;
         while (!stats.isAfterLast()) {
             Integer totalEventsCount = stats.getInt(0);
-            Integer averageConfidence = stats.getInt(1);
+            Integer totalAverageConfidence = stats.getInt(1);
             Log.d(TAG, "totalEventsCount: " + totalEventsCount);
-            Log.d(TAG, "averageConfidence: " + averageConfidence);
+            Log.d(TAG, "totalAverageConfidence: " + totalAverageConfidence);
             i++;
             stats.moveToNext();
         }
