@@ -80,9 +80,9 @@ public class PermissionRequestActivity extends Activity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    eventBus.postSticky(new PermissionEvent(PermissionEvent.GRANTED));
+                    eventBus.post(new PermissionEvent(PermissionEvent.GRANTED));
                 } else {
-                    eventBus.postSticky(new PermissionEvent(PermissionEvent.DENIED));
+                    eventBus.post(new PermissionEvent(PermissionEvent.DENIED));
                 }
             }
 

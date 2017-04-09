@@ -41,6 +41,9 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
         this.context = context;
     }
 
+
+
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();

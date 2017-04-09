@@ -1085,6 +1085,7 @@ public class SoftKeyboard extends InputMethodService
                 suggestedWords.moveToNext();
             }
 
+            suggestedWords.close();
             return suggestedList;
         }
 
