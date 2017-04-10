@@ -43,31 +43,33 @@ public class StatsWidgetService extends Service {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this
                 .getApplicationContext());
 
-        int[] allWidgetIds = intent
-                .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+        if(intent != null) {
+            int[] allWidgetIds = intent
+                    .getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
-        for (int widgetId : allWidgetIds) {
-            remoteViews = new RemoteViews(this
-                    .getApplicationContext().getPackageName(),
-                    R.layout.stats_widget_layout);
-            // Set the text
-            remoteViews.setTextViewText(R.id.m_c_events_totals,
-                    result.get("totalEventsCount"));
-            remoteViews.setTextViewText(R.id.m_c_events_avg,
-                    result.get("totalAverageConfidence"));
-            // Register an onClickListener
-            Intent clickIntent = new Intent(this.getApplicationContext(),
-                    StatsWidgetProvider.class);
+            for (int widgetId : allWidgetIds) {
+                remoteViews = new RemoteViews(this
+                        .getApplicationContext().getPackageName(),
+                        R.layout.stats_widget_layout);
+                // Set the text
+                remoteViews.setTextViewText(R.id.m_c_events_totals,
+                        result.get("totalEventsCount"));
+                remoteViews.setTextViewText(R.id.m_c_events_avg,
+                        result.get("totalAverageConfidence"));
+                // Register an onClickListener
+                Intent clickIntent = new Intent(this.getApplicationContext(),
+                        StatsWidgetProvider.class);
 
-            clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
-                    allWidgetIds);
+                clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,
+                        allWidgetIds);
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), widgetId, clickIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
-            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        getApplicationContext(), widgetId, clickIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+                appWidgetManager.updateAppWidget(widgetId, remoteViews);
+            }
         }
     }
 
@@ -87,7 +89,7 @@ public class StatsWidgetService extends Service {
                 Integer totalEventsCount = stats.getInt(0);
                 Integer totalAverageConfidence = stats.getInt(1);
                 resultMap.put("totalEventsCount", "totalEventsCount: " + totalEventsCount);
-                resultMap.put("totalAverageConfidence", "totalAverageConfidence: " + totalAverageConfidence);
+                resultMap.put("totalAverageConfidence", "totalAverageConfidence: " + totalAverageConfidence + "%");
                 i++;
                 stats.moveToNext();
             }
