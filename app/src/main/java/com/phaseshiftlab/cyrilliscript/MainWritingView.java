@@ -83,65 +83,6 @@ public class MainWritingView extends View {
         }
     };
 
-
-    @Override
-    public Parcelable onSaveInstanceState() {
-        //begin boilerplate code that allows parent classes to save state
-        Parcelable superState = super.onSaveInstanceState();
-
-        SavedState ss = new SavedState(superState);
-        //end
-
-        ss.pathStack = this.pathStack;
-
-        return ss;
-    }
-
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        //begin boilerplate code so parent classes can restore state
-        if(!(state instanceof SavedState)) {
-            super.onRestoreInstanceState(state);
-            return;
-        }
-
-        SavedState ss = (SavedState)state;
-        super.onRestoreInstanceState(ss.getSuperState());
-        //end
-
-        this.pathStack = ss.pathStack;
-    }
-
-    static class SavedState extends BaseSavedState {
-        public ArrayDeque<Path> pathStack;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            this.pathStack = (ArrayDeque<Path>) in.readSerializable();
-        }
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeSerializable(this.pathStack);
-        }
-
-        //required field that makes Parcelables from a Parcel
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
-    }
-
     public MainWritingView(Context context, AttributeSet attrs) throws InterruptedException {
         super(context, attrs);
         if (!this.isInEditMode()) {

@@ -2,7 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_view"
-    android:saveEnabled="true"
     style="@style/MainViewStyle"
     tools:layout_editor_absoluteY="0dp"
     tools:layout_editor_absoluteX="0dp">
@@ -78,7 +77,6 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintRight_toRightOf="parent" />
     <com.phaseshiftlab.cyrilliscript.MainWritingView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:saveEnabled="true"
         android:id="@+id/drawing_input_view"
         android:layout_width="0dp"
         android:layout_height="180dp"
