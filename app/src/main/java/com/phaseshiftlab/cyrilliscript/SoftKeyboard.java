@@ -41,8 +41,10 @@ import com.facebook.stetho.Stetho;
 import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.UserDefinedDictionaryEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.WritingViewEvent;
 import com.phaseshiftlab.languagelib.SpellingDatabaseHelper;
+import com.phaseshiftlab.languagelib.UserDictDatabaseHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,7 +109,9 @@ public class SoftKeyboard extends InputMethodService
     private final String TAG = "Cyrilliscript " + SoftKeyboard.class.getSimpleName();
     private MainView mMainView;
 
+    private EventBus eventBus;
     private SpellingDatabaseHelper spellingDb;
+    private UserDictDatabaseHelper userDictDb;
     private Cursor suggestedWords;
     private ArrayList<String> mSuggestionList;
     private int mCurrentInputSelect;
@@ -131,6 +135,8 @@ public class SoftKeyboard extends InputMethodService
         mWordSeparators = getResources().getString(R.string.word_separators);
 
         spellingDb = new SpellingDatabaseHelper(this);
+        userDictDb = new UserDictDatabaseHelper(this);
+        eventBus = EventBus.getDefault();
     }
 
 
@@ -190,6 +196,13 @@ public class SoftKeyboard extends InputMethodService
         new RequestSpellingDbTask().execute(recognized);
     }
 
+    private void getUserDefinedWords() {
+        String recognizedCandidate = mComposing.toString();
+        if(recognizedCandidate.length() > 0) {
+           new RequestUserDictDbTask().execute(recognizedCandidate);
+        }
+    }
+
     /**
      * Called by the framework when your view for creating input needs to
      * be generated.  This will be called the first time your input method
@@ -204,9 +217,6 @@ public class SoftKeyboard extends InputMethodService
 
         mMainView = (MainView) getLayoutInflater().inflate(R.layout.main_view, null);
         mDrawingInputView = (MainWritingView) mMainView.findViewById(R.id.drawing_input_view);
-        setCurrentQwerty();
-        setLatinKeyboard(mCurKeyboard);
-
 
         //return mInputView;
         return mMainView;
@@ -216,8 +226,8 @@ public class SoftKeyboard extends InputMethodService
     public void onStartInputView(EditorInfo attribute, boolean restarting) {
         super.onStartInputView(attribute, restarting);
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+        if (!eventBus.isRegistered(this)) {
+            eventBus.register(this);
         }
 
         // Apply the selected keyboard to the input view.
@@ -234,7 +244,7 @@ public class SoftKeyboard extends InputMethodService
                 break;
             default:
         }
-        setLatinKeyboard(mCurKeyboard);
+        //setLatinKeyboard(mCurKeyboard);
 
         // Hides the Keyboard when Services Starts
         mInputView.closing();
@@ -896,7 +906,7 @@ public class SoftKeyboard extends InputMethodService
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
             updateCandidates();
-            EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
+            eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
             // text, we would commit one of them here.  But for this sample,
@@ -1005,7 +1015,7 @@ public class SoftKeyboard extends InputMethodService
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        eventBus.unregister(this);
         mGoogleApiFacade.disconnect();
         if(mDrawingInputView != null) {
             mDrawingInputView.onDetachedFromWindow();
@@ -1040,18 +1050,18 @@ public class SoftKeyboard extends InputMethodService
         Log.d(TAG, "Clear Drawing called");
         mGoogleApiFacade.sendAnalyticsEvent("CLEAR");
         setSuggestions(null, true, true);
-        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
+        eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
     }
 
     public void deleteLastPath(View view) {
         Log.d(TAG, "Undo called");
         mGoogleApiFacade.sendAnalyticsEvent("UNDO");
-        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.UNDO));
+        eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.UNDO));
     }
 
     public void restoreLastPath(View view) {
         Log.d(TAG, "Redo called");
-        EventBus.getDefault().post(new SoftKeyboardEvent(SoftKeyboardEvent.REDO));
+        eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.REDO));
     }
 
     public void sendBackspace(View view) {
@@ -1071,32 +1081,66 @@ public class SoftKeyboard extends InputMethodService
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
     }
 
-    private class RequestSpellingDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
+    private void offerToSaveToUserDictDb(boolean offerToSave) {
+        if(offerToSave) {
+            eventBus.post(new UserDefinedDictionaryEvent(UserDefinedDictionaryEvent.SHOW));
+        } else {
+            eventBus.post(new UserDefinedDictionaryEvent(UserDefinedDictionaryEvent.HIDE));
+        }
+    }
+
+
+    private static ArrayList<String> unpackSuggestions(Cursor cursor) {
+        ArrayList<String> suggestedList = new ArrayList<>();
+        if(cursor != null) {
+            Integer i = 0;
+            while (!cursor.isAfterLast()) {
+                suggestedList.add(cursor.getString(0));
+                i++;
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        return suggestedList;
+    }
+
+    private class RequestUserDictDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... params) {
             String recognized = params[0];
-            suggestedWords = spellingDb.getWords(recognized);
-            ArrayList<String> suggestedList = new ArrayList<>();
-
-            Integer i = 0;
-            while (!suggestedWords.isAfterLast()) {
-                suggestedList.add(suggestedWords.getString(0));
-                i++;
-                suggestedWords.moveToNext();
-            }
-
-            suggestedWords.close();
-            return suggestedList;
+            suggestedWords = userDictDb.queryUserDictionary(recognized);
+            return SoftKeyboard.unpackSuggestions(suggestedWords);
         }
 
         @Override
         protected void onPostExecute(ArrayList<String> result) {
             if(result.size() > 0) {
                 setSuggestions(result, true, true);
-            } else {//nothing from the spelling db, so suggest what the ocr has returned
+                offerToSaveToUserDictDb(false);
+            } else {
+                offerToSaveToUserDictDb(true);
                 updateCandidates();
             }
+        }
+    }
 
+    private class RequestSpellingDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            String recognized = params[0];
+            suggestedWords = spellingDb.getWords(recognized);
+            return SoftKeyboard.unpackSuggestions(suggestedWords);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> result) {
+            if(result.size() > 0) {
+                setSuggestions(result, true, true);
+                offerToSaveToUserDictDb(false);
+            } else {//nothing from the built-in spelling db, try the user-defined words db
+                getUserDefinedWords();
+            }
         }
     }
 }

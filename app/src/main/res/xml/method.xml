@@ -31,8 +31,7 @@
         android:imeSubtypeMode="keyboard" />
 
     <subtype
-        android:label="@string/label_subtype_generic"
-        android:icon="@drawable/icon_en_us"
+        android:label="@string/label_subtype_bg_BG"
         android:imeSubtypeLocale="en_US"
         android:imeSubtypeMode="keyboard" />
 

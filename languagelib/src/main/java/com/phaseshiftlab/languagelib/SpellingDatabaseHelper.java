@@ -16,16 +16,19 @@ public class SpellingDatabaseHelper extends SQLiteAssetHelper {
     }
 
     public Cursor getWords(String inputWord) {
+        String pattern = "\\p{L}*";
+        if(inputWord.matches(pattern)) {
+            SQLiteDatabase db = getReadableDatabase();
 
-        SQLiteDatabase db = getReadableDatabase();
+            String preparedStatement = "SELECT DISTINCT word_form AS suggestions FROM w_words JOIN w_word_forms ON w_words.`ID` = w_word_forms.`word_id` WHERE w_words.word like ? ORDER BY length(suggestions) LIMIT 5";
+            String [] sqlSelect = {inputWord + "%"};
 
-        String preparedStatement = "SELECT DISTINCT word_form AS suggestions FROM w_words JOIN w_word_forms ON w_words.`ID` = w_word_forms.`word_id` WHERE w_words.word like ? ORDER BY length(suggestions) LIMIT 5";
-        String [] sqlSelect = {inputWord + "%"};
+            Cursor c = db.rawQuery(preparedStatement, sqlSelect);
 
-        Cursor c = db.rawQuery(preparedStatement, sqlSelect);
-
-        c.moveToFirst();
-        return c;
-
+            c.moveToFirst();
+            return c;
+        } else {
+            return null;
+        }
     }
 }

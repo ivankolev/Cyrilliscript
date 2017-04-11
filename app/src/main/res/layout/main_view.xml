@@ -6,17 +6,26 @@
     tools:layout_editor_absoluteY="0dp"
     tools:layout_editor_absoluteX="0dp">
 
+    <ToggleButton
+        android:id="@+id/saveToUserDictionary"
+        android:layout_width="59dp"
+        android:layout_height="37dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textOff="Save"
+        android:textOn="Save"
+        android:visibility="gone"
+        tools:layout_editor_absoluteY="0dp"/>
+
     <Button
         android:id="@+id/clearButton"
         android:layout_width="44dp"
         android:layout_height="36dp"
         android:gravity="center_horizontal|top"
-        android:layout_marginStart="4dp"
         android:onClick="clearDrawingCanvas"
         android:drawableStart="@drawable/ic_clear_black_24dp"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="@+id/drawing_input_view"
-        tools:layout_editor_absoluteY="0dp" />
+        tools:layout_editor_absoluteY="0dp"
+        app:layout_constraintLeft_toRightOf="@+id/saveToUserDictionary"
+        />
 
     <Button
         android:id="@+id/backspaceButton"

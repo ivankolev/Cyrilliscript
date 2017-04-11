@@ -3,15 +3,20 @@ package com.phaseshiftlab.cyrilliscript;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.constraint.ConstraintLayout;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.ToggleButton;
 
 import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.LanguageChangeEvent;
+import com.phaseshiftlab.cyrilliscript.eventslib.UserDefinedDictionaryEvent;
 import com.phaseshiftlab.ocrlib.PermissionRequestActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,13 +46,10 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
         this.context = context;
     }
 
-
-
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if(!this.isInEditMode()){
+        if (!this.isInEditMode()) {
             EventBus.getDefault().register(this);
             initInputSelectSpinner();
             initLangguageSelectSpinner();
@@ -57,21 +59,30 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
     private void initLangguageSelectSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.languageSelect);
         List<String> installedLanguages = PermissionRequestActivity.getInstalledLanguagesFromPrefs(context);
-        if(installedLanguages.size() > 1) {
+        if (installedLanguages.size() > 1) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, installedLanguages);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
             spinner.setOnItemSelectedListener(this);
             spinner.setVisibility(VISIBLE);
         }
+    }
 
+    @Subscribe
+    public void onUserDefinedDictionaryEvent(UserDefinedDictionaryEvent event) {
+        ToggleButton saveToUserDict = (ToggleButton) findViewById(R.id.saveToUserDictionary);
+        if (event.getEventType() == UserDefinedDictionaryEvent.SHOW) {
+            saveToUserDict.setVisibility(VISIBLE);
+        } else if (event.getEventType() == UserDefinedDictionaryEvent.HIDE) {
+            saveToUserDict.setVisibility(GONE);
+        }
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadSuccessEvent(DownloadSuccessEvent event) {
         String message = event.getMessage();
-        if(message != null && message.equals("SUCCESS")) {
+        if (message != null && message.equals("SUCCESS")) {
             initLangguageSelectSpinner();
         }
     }
