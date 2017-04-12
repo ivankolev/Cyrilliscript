@@ -10,9 +10,9 @@
     <TextView
         android:textColor="@color/white"
         android:id="@+id/widget_title"
-        style="@android:style/TextAppearance.Small"
+        android:textSize="12sp"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="16dp"
         android:layout_marginTop="@dimen/widget_margin"
         android:layout_marginStart="@dimen/widget_margin"
         android:text="@string/cyrilliscript_statistics"/>
@@ -20,17 +20,24 @@
     <TextView
         android:textColor="@color/white"
         android:id="@+id/m_c_events_totals"
-        style="@android:style/TextAppearance.Small"
+        android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_marginStart="@dimen/widget_margin"
-        android:layout_height="20dp" />
+        android:layout_height="16dp" />
 
     <TextView
         android:textColor="@color/white"
         android:id="@+id/m_c_events_avg"
-        style="@android:style/TextAppearance.Small"
+        android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_marginStart="@dimen/widget_margin"
-        android:layout_height="20dp" />
+        android:layout_height="16dp" />
+    <TextView
+        android:textColor="@color/white"
+        android:id="@+id/user_defined_words"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/widget_margin"
+        android:layout_height="16dp" />
 
 </LinearLayout>

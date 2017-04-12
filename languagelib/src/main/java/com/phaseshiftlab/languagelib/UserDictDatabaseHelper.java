@@ -19,9 +19,9 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
     }
 
     public int insertWord(String word) {
-        if(word.matches(pattern)) {
+        if (word.matches(pattern)) {
             String insertStatement = "INSERT OR IGNORE INTO user_defined_words VALUES( ? )";
-            String [] sqlInsert = { word };
+            String[] sqlInsert = {word};
             Cursor c = db.rawQuery(insertStatement, sqlInsert);
             c.close();
             return 1;
@@ -30,12 +30,24 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
         }
     }
 
-    public Cursor queryUserDictionary(String word) {
-        if(word.matches(pattern)) {
-            SQLiteDatabase db = getReadableDatabase();
+    public int getWordCount() {
+        String selectStatement = "SELECT count(word) FROM user_defined_words";
+        Cursor c = db.rawQuery(selectStatement, null);
+        int result;
+        if (c.moveToFirst()) {
+            result = c.getInt(0);
+        } else {
+            result = -1;
+        }
 
+        c.close();
+        return result;
+    }
+
+    public Cursor queryUserDictionary(String word) {
+        if (word.matches(pattern)) {
             String preparedStatement = "SELECT word FROM user_defined_words WHERE word like ? ORDER BY length(word) LIMIT 5";
-            String [] sqlSelect = {word + "%"};
+            String[] sqlSelect = {word + "%"};
 
             Cursor c = db.rawQuery(preparedStatement, sqlSelect);
 

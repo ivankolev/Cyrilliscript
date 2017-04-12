@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 
 import com.phaseshiftlab.cyrilliscript.R;
 import com.phaseshiftlab.languagelib.StatisticsDatabaseHelper;
+import com.phaseshiftlab.languagelib.UserDictDatabaseHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +21,13 @@ public class StatsWidgetService extends Service {
     private static final String TAG = "Cyrilliscript";
     RemoteViews remoteViews;
     StatisticsDatabaseHelper statisticsDb;
+    UserDictDatabaseHelper userDictDb;
     Intent intent;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         statisticsDb = new StatisticsDatabaseHelper(this);
+        userDictDb = new UserDictDatabaseHelper(this);
         this.intent = intent;
 
         requestStatistics();
@@ -56,6 +59,8 @@ public class StatsWidgetService extends Service {
                         result.get("totalEventsCount"));
                 remoteViews.setTextViewText(R.id.m_c_events_avg,
                         result.get("totalAverageConfidence"));
+                remoteViews.setTextViewText(R.id.user_defined_words,
+                        result.get("totalUserDefinedWords"));
                 // Register an onClickListener
                 Intent clickIntent = new Intent(this.getApplicationContext(),
                         StatsWidgetProvider.class);
@@ -88,12 +93,16 @@ public class StatsWidgetService extends Service {
             while (!stats.isAfterLast()) {
                 Integer totalEventsCount = stats.getInt(0);
                 Integer totalAverageConfidence = stats.getInt(1);
-                resultMap.put("totalEventsCount", "totalEventsCount: " + totalEventsCount);
-                resultMap.put("totalAverageConfidence", "totalAverageConfidence: " + totalAverageConfidence + "%");
+                resultMap.put("totalEventsCount", "total recognition events: " + totalEventsCount);
+                resultMap.put("totalAverageConfidence", "total average confidence: " + totalAverageConfidence + "%");
                 i++;
                 stats.moveToNext();
             }
             stats.close();
+
+            int userDefinedWords = userDictDb.getWordCount();
+
+            resultMap.put("totalUserDefinedWords", "total words saved: " + userDefinedWords);
 
             return resultMap;
         }

@@ -36,9 +36,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.ToggleButton;
 
-import com.facebook.stetho.Stetho;
-import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.UserDefinedDictionaryEvent;
@@ -130,7 +129,6 @@ public class SoftKeyboard extends InputMethodService
         getAssets();
         mGoogleApiFacade = new GoogleApiFacade(this);
 
-        Stetho.initializeWithDefaults(this);
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
@@ -902,10 +900,16 @@ public class SoftKeyboard extends InputMethodService
             }
 //            updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (mSuggestionList != null && mSuggestionList.size() > index) {
+            ToggleButton saveToUserDict = (ToggleButton) mMainView.findViewById(R.id.saveToUserDictionary);
+
             String pickedSuggestion = mSuggestionList.get(index);
+            if(saveToUserDict.isChecked() && saveToUserDict.getVisibility() != View.GONE) {
+                userDictDb.insertWord(pickedSuggestion);
+            }
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
             updateCandidates();
+            eventBus.post(new UserDefinedDictionaryEvent(UserDefinedDictionaryEvent.HIDE));
             eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
