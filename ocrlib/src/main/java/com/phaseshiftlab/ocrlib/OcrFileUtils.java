@@ -19,7 +19,7 @@ import okhttp3.ResponseBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class OcrFileUtils {
+class OcrFileUtils {
     private static final String TAG = "Cyrilliscript";
     private static final String DATA_PATH = Environment
             .getExternalStorageDirectory().toString() + "/TesseractOCR/";
@@ -30,11 +30,11 @@ public class OcrFileUtils {
         return DATA_PATH;
     }
 
-    public static String getTessdataPath() {
+    private static String getTessdataPath() {
         return TESSDATA_PATH;
     }
 
-    static void prepareTrainedDataFiles(Context context, String langFile, String lang) throws InterruptedException {
+    static void prepareTrainedDataFiles(Context context, String langFile, String lang) {
         SharedPreferences preferences = context.getSharedPreferences(TAG, MODE_PRIVATE);
         String[] paths = new String[]{getDataPath(), getTessdataPath()};
 
@@ -68,7 +68,7 @@ public class OcrFileUtils {
     }
 
 
-    public static void copyTrainedDataFile(Context context, String langFile) throws IOException {
+    private static void copyTrainedDataFile(Context context, String langFile) throws IOException {
         InputStream in = context.getAssets().open("tessdata/" + langFile);
         OutputStream out = new FileOutputStream(new File(getTessdataPath(), langFile));
 

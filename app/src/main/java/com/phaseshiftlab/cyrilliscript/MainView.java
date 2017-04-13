@@ -3,9 +3,6 @@ package com.phaseshiftlab.cyrilliscript;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.constraint.ConstraintLayout;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -101,11 +98,6 @@ public class MainView extends ConstraintLayout implements AdapterView.OnItemSele
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
     }
 
     @Override

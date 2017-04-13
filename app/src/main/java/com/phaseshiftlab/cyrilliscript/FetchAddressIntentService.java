@@ -15,11 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class FetchAddressIntentService extends IntentService {
-    private String TAG = "Cyrilliscript";
-    protected ResultReceiver mReceiver;
+    private final String TAG = "Cyrilliscript";
+    private ResultReceiver mReceiver;
 
     public FetchAddressIntentService() {
         super("FetchAddressIntentService");
@@ -74,7 +73,7 @@ public class FetchAddressIntentService extends IntentService {
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessageMap);
         } else {
             Address address = addresses.get(0);
-            ArrayList<String> addressFragments = new ArrayList<String>();
+            ArrayList<String> addressFragments = new ArrayList<>();
 
             // Fetch the address lines using getAddressLine,
             // join them, and send them to the thread.

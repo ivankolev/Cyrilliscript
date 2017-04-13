@@ -14,15 +14,16 @@ import com.phaseshiftlab.cyrilliscript.R;
 import com.phaseshiftlab.languagelib.StatisticsDatabaseHelper;
 import com.phaseshiftlab.languagelib.UserDictDatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class StatsWidgetService extends Service {
     private static final String TAG = "Cyrilliscript";
-    RemoteViews remoteViews;
-    StatisticsDatabaseHelper statisticsDb;
-    UserDictDatabaseHelper userDictDb;
-    Intent intent;
+    private RemoteViews remoteViews;
+    private StatisticsDatabaseHelper statisticsDb;
+    private UserDictDatabaseHelper userDictDb;
+    private Intent intent;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -89,13 +90,11 @@ public class StatsWidgetService extends Service {
         protected Map<String, String> doInBackground(String... params) {
             Map<String, String> resultMap = new HashMap<>();
             Cursor stats = statisticsDb.getTotals();
-            Integer i = 0;
             while (!stats.isAfterLast()) {
                 Integer totalEventsCount = stats.getInt(0);
                 Integer totalAverageConfidence = stats.getInt(1);
                 resultMap.put("totalEventsCount", "total recognition events: " + totalEventsCount);
                 resultMap.put("totalAverageConfidence", "total average confidence: " + totalAverageConfidence + "%");
-                i++;
                 stats.moveToNext();
             }
             stats.close();

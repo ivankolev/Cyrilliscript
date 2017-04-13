@@ -22,11 +22,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class OcrLanguageSupport {
     private static final String TAG = "Cyrilliscript";
-    private static String API_BASE_URL = "https://github.com/";
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    private static Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL);
-    private static Retrofit retrofit = builder.client(httpClient.build()).build();
-    private static GitHubTessdataInterface client = retrofit.create(GitHubTessdataInterface.class);
+    private static final String API_BASE_URL = "https://github.com/";
+    private static final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static final Retrofit.Builder builder = new Retrofit.Builder().baseUrl(API_BASE_URL);
+    private static final Retrofit retrofit = builder.client(httpClient.build()).build();
+    private static final GitHubTessdataInterface client = retrofit.create(GitHubTessdataInterface.class);
 
     public static void downloadTesseractData(final Context context, final String tesseractFile) {
         Log.d(TAG, "attempt to download " + tesseractFile);

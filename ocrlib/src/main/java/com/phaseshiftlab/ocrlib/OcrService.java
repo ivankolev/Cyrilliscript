@@ -27,7 +27,6 @@ import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.languagelib.StatisticsDatabaseHelper;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
@@ -40,14 +39,14 @@ import java.util.UUID;
 
 public class OcrService extends Service {
 
-    private int mId = 1001;
+    private final int mId = 1001;
 
     private enum Alphabets {
         BG_CYRILLIC("АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя"),
         EN_LATIN("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
         DIGITS("1234567890"),
         SYMBOLS("`~!@#$%^&*()_+-={}[]|\\:;\"'<>/?,.");
-        private String alphabet;
+        private final String alphabet;
 
         Alphabets(String alphabet) {
             this.alphabet = alphabet;
@@ -63,7 +62,7 @@ public class OcrService extends Service {
         BG("bul"),
         EN("eng");
 
-        private String language;
+        private final String language;
 
         TesseractFiles(String language) {
             this.language = language;
@@ -78,7 +77,7 @@ public class OcrService extends Service {
         }
     }
 
-    private static Map<String, String> countryCodes;
+    private static final Map<String, String> countryCodes;
 
     static {
         countryCodes = new HashMap<>();
@@ -89,31 +88,31 @@ public class OcrService extends Service {
     private final Context context;
     private TessBaseAPI baseAPI;
     private StatisticsDatabaseHelper statisticsDb;
-    private IBinder myBinder = new MyBinder();
+    private final IBinder myBinder = new MyBinder();
     private static final String TAG = "Cyrilliscript";
     private static final String DATA_PATH = OcrFileUtils.getDataPath();
 
-    public static String getLang() {
+    private static String getLang() {
         return lang;
     }
 
-    public static void setLang(String lang) {
+    private static void setLang(String lang) {
         OcrService.lang = lang;
     }
 
-    public static String getLangFile() {
+    private static String getLangFile() {
         return langFile;
     }
 
-    public static void setLangFile(String langFile) {
+    private static void setLangFile(String langFile) {
         OcrService.langFile = langFile;
     }
 
-    public static String getLetters() {
+    private static String getLetters() {
         return letters;
     }
 
-    public static void setLetters(String letters) {
+    private static void setLetters(String letters) {
         OcrService.letters = letters;
     }
 
@@ -121,8 +120,8 @@ public class OcrService extends Service {
     private static String langFile;
 
     private static String letters;
-    private static String digits = Alphabets.DIGITS.getAlphabet();
-    private static String symbols = Alphabets.SYMBOLS.getAlphabet();
+    private static final String digits = Alphabets.DIGITS.getAlphabet();
+    private static final String symbols = Alphabets.SYMBOLS.getAlphabet();
 
     private String tesseractFilePrefix;
     private SharedPreferences preferences;
@@ -160,11 +159,7 @@ public class OcrService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        try {
-            initRequiredFiles();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        initRequiredFiles();
         return myBinder;
     }
 
@@ -200,7 +195,7 @@ public class OcrService extends Service {
         return recognized;
     }
 
-    public void saveThresholdImage() {
+    private void saveThresholdImage() {
         Log.d(TAG, "Will try to save thresholdImage to file...");
         try {
             Pix rawImage = baseAPI.getThresholdedImage();
@@ -280,11 +275,7 @@ public class OcrService extends Service {
     }
 
     private void initialize() {
-        try {
-            OcrFileUtils.prepareTrainedDataFiles(context, getLangFile(), getLang());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        OcrFileUtils.prepareTrainedDataFiles(context, getLangFile(), getLang());
         initTesseractAPI();
     }
 
@@ -294,7 +285,7 @@ public class OcrService extends Service {
         this.startActivity(dialogIntent);
     }
 
-    public void initRequiredFiles() throws InterruptedException {
+    private void initRequiredFiles() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             initialize();
         } else {

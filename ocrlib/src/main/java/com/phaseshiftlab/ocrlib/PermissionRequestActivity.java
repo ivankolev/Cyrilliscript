@@ -137,7 +137,7 @@ public class PermissionRequestActivity extends Activity {
         return installedLanguages;
     }
 
-    public List<String> getLanguageListFromPrefs() {
+    private List<String> getLanguageListFromPrefs() {
         Map<String, ?> prefs = this.getSharedPreferences(TAG, MODE_PRIVATE).getAll();
 
         List<String> languagesList = new ArrayList<>();

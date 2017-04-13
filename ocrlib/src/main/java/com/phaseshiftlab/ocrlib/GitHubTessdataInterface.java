@@ -5,7 +5,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public interface GitHubTessdataInterface {
+interface GitHubTessdataInterface {
     @GET("/tesseract-ocr/tessdata/blob/master/{language}.traineddata?raw=true")
     Call<ResponseBody> tessDataFile(@Path("language") String language);
 }

@@ -72,7 +72,7 @@ public class SoftKeyboard extends InputMethodService
      * a QWERTY keyboard to Chinese), but may not be used for input methods
      * that are primarily intended to be used for on-screen text entry.
      */
-    static final boolean PROCESS_HARD_KEYS = true;
+    private static final boolean PROCESS_HARD_KEYS = true;
 
     private InputMethodManager mInputMethodManager;
 
@@ -82,7 +82,7 @@ public class SoftKeyboard extends InputMethodService
     private CandidateView mCandidateView;
     private CompletionInfo[] mCompletions;
 
-    private StringBuilder mComposing = new StringBuilder();
+    private final StringBuilder mComposing = new StringBuilder();
     private boolean mPredictionOn;
     private boolean mCompletionOn;
     private int mLastDisplayWidth;
@@ -96,7 +96,7 @@ public class SoftKeyboard extends InputMethodService
     private LatinKeyboard mQwertyKeyboard_es;
     private LatinKeyboard mCurKeyboard;
 
-    public EditorInfo eInfo;
+    private EditorInfo eInfo;
 
     private static final int SHIFT_STATE_INITIAL = 1;
     private static final int SHIFT_STATE_INTERMEDIATE = 2;
@@ -811,11 +811,7 @@ public class SoftKeyboard extends InputMethodService
      * Helper to determine if a given character code is alphabetic.
      */
     private boolean isAlphabet(int code) {
-        if (Character.isLetter(code)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Character.isLetter(code);
     }
 
     private void handleCharacter(int primaryCode, int[] keyCodes) {
@@ -877,7 +873,7 @@ public class SoftKeyboard extends InputMethodService
         return mWordSeparators;
     }
 
-    public boolean isWordSeparator(int code) {
+    private boolean isWordSeparator(int code) {
         String separators = getWordSeparators();
         return separators.contains(String.valueOf((char) code));
     }
@@ -886,7 +882,7 @@ public class SoftKeyboard extends InputMethodService
 
     //region Candidates (Suggestions)
 
-    public void pickDefaultCandidate() {
+    private void pickDefaultCandidate() {
         pickSuggestionManually(0);
     }
 
@@ -904,7 +900,7 @@ public class SoftKeyboard extends InputMethodService
 
             String pickedSuggestion = mSuggestionList.get(index);
             if(saveToUserDict.isChecked() && saveToUserDict.getVisibility() != View.GONE) {
-                userDictDb.insertWord(pickedSuggestion);
+                Integer result = userDictDb.insertWord(pickedSuggestion);
             }
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
@@ -919,8 +915,8 @@ public class SoftKeyboard extends InputMethodService
         }
     }
 
-    public void setSuggestions(List<String> suggestions, boolean completions,
-                               boolean typedWordValid) {
+    private void setSuggestions(List<String> suggestions, boolean completions,
+                                boolean typedWordValid) {
         if (suggestions != null && suggestions.size() > 0) {
             mSuggestionList = new ArrayList<>(suggestions);
             setCandidatesViewShown(true);
@@ -940,7 +936,7 @@ public class SoftKeyboard extends InputMethodService
     private void updateCandidates() {
         if (!mCompletionOn) {
             if (mComposing.length() > 0) {
-                ArrayList<String> list = new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<>();
                 list.add(mComposing.toString());
                 setSuggestions(list, true, true);
             } else {
@@ -987,9 +983,8 @@ public class SoftKeyboard extends InputMethodService
                 return;
             }
 
-            List<String> stringList = new ArrayList<String>();
-            for (int i = 0; i < completions.length; i++) {
-                CompletionInfo ci = completions[i];
+            List<String> stringList = new ArrayList<>();
+            for (CompletionInfo ci : completions) {
                 if (ci != null) stringList.add(ci.getText().toString());
             }
             setSuggestions(stringList, true, true);

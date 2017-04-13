@@ -32,8 +32,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.HashMap;
 
 
-public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private String TAG = "Cyrilliscript";
+class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private final String TAG = "Cyrilliscript";
     private Tracker mTracker;
     private GoogleApiClient mGoogleApiClient;
     private SoftKeyboard mSoftKeyboard;
@@ -41,7 +41,7 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
     private AddressResultReceiver mResultReceiver;
     private HashMap<String, String> mAddressOutput;
 
-    private EventBus eventBus = EventBus.getDefault();
+    private final EventBus eventBus = EventBus.getDefault();
 
 
     GoogleApiFacade() {
@@ -126,7 +126,7 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
 
     }
 
-    protected void startIntentService() {
+    private void startIntentService() {
         mResultReceiver = new AddressResultReceiver(new Handler());
         Intent intent = new Intent(mSoftKeyboard, FetchAddressIntentService.class);
         intent.putExtra(Constants.RECEIVER, mResultReceiver);
@@ -171,8 +171,8 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
         mLocation = location;
     }
 
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
+    private class AddressResultReceiver extends ResultReceiver {
+        AddressResultReceiver(Handler handler) {
             super(handler);
         }
 
@@ -185,8 +185,14 @@ public class GoogleApiFacade implements GoogleApiClient.ConnectionCallbacks, Goo
 
             // Show a toast message if an address was found.
             if (resultCode == Constants.SUCCESS_RESULT) {
-                String fullAddress = mAddressOutput.get(Constants.FULL_ADDRESS);
-                String countryCode = mAddressOutput.get(Constants.COUNTRY_CODE);
+                String fullAddress = null;
+                if (mAddressOutput != null) {
+                    fullAddress = mAddressOutput.get(Constants.FULL_ADDRESS);
+                }
+                String countryCode = null;
+                if (mAddressOutput != null) {
+                    countryCode = mAddressOutput.get(Constants.COUNTRY_CODE);
+                }
                 Log.d(TAG, fullAddress);
                 Log.d(TAG + " country", countryCode);
                 eventBus.post(new LocationEvent(countryCode));

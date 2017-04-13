@@ -10,7 +10,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class StatisticsDatabaseHelper extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "statistics.db";
     private static final int DATABASE_VERSION = 1;
-    private SQLiteDatabase statisticsDb;
+    private final SQLiteDatabase statisticsDb;
     public StatisticsDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         statisticsDb = getWritableDatabase();

@@ -12,8 +12,6 @@ import android.graphics.Path;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,7 +34,7 @@ import java.util.Objects;
 public class MainWritingView extends View {
 
     private static final String TAG = "Cyrilliscript";
-    public static String DATA_PATH = null;
+    private static String DATA_PATH = null;
     public static final String lang = "bul";
 
     private Path drawPath;
@@ -45,7 +43,7 @@ public class MainWritingView extends View {
     private Paint drawPaint;
 
     //initial color
-    private int paintColor = 0xFF263238;
+    private final int paintColor = 0xFF263238;
 
     //canvas - holding pen, holds your drawings
     //and transfers them to the view
@@ -54,15 +52,15 @@ public class MainWritingView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
 
-    private ArrayDeque<Path> pathStack = new ArrayDeque<>();
+    private final ArrayDeque<Path> pathStack = new ArrayDeque<>();
 
     private OcrService ocrService;
-    boolean isBound = false;
+    private boolean isBound = false;
 
     private EventBus eventBus;
 
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             OcrService.MyBinder binder = (OcrService.MyBinder) service;
@@ -220,7 +218,7 @@ public class MainWritingView extends View {
         return true;
     }
 
-    public Bitmap getBitmap() {
+    private Bitmap getBitmap() {
         this.setDrawingCacheEnabled(true);
         this.buildDrawingCache();
         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());

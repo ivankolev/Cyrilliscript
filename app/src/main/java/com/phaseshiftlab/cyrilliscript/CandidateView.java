@@ -42,7 +42,7 @@ class CandidateView extends View {
     private List<String> mSuggestions;
     private int mSelectedIndex;
     private int mTouchX = OUT_OF_BOUNDS;
-    private Drawable mSelectionHighlight;
+    private final Drawable mSelectionHighlight;
     private boolean mTypedWordValid;
     
     private Rect mBgPadding;
@@ -50,24 +50,27 @@ class CandidateView extends View {
     private static final int MAX_SUGGESTIONS = 32;
     private static final int SCROLL_PIXELS = 20;
     
-    private int[] mWordWidth = new int[MAX_SUGGESTIONS];
-    private int[] mWordX = new int[MAX_SUGGESTIONS];
+    private final int[] mWordWidth = new int[MAX_SUGGESTIONS];
+    private final int[] mWordX = new int[MAX_SUGGESTIONS];
 
     private static final int X_GAP = 10;
     
-    private static final List<String> EMPTY_LIST = new ArrayList<String>();
+    private static final List<String> EMPTY_LIST = new ArrayList<>();
 
-    private int mColorNormal;
-    private int mColorRecommended;
-    private int mColorOther;
-    private int mVerticalPadding;
-    private Paint mPaint;
+    private final int mColorNormal;
+    private final int mColorRecommended;
+    private final int mColorOther;
+    private final int mVerticalPadding;
+    private final Paint mPaint;
     private boolean mScrolled;
     private int mTargetScrollX;
     
     private int mTotalWidth;
     
-    private GestureDetector mGestureDetector;
+    private final GestureDetector mGestureDetector;
+
+    Rect padding;
+
 
     /**
      * Construct a CandidateView for showing suggested words for completion.
@@ -120,6 +123,8 @@ class CandidateView extends View {
                 return true;
             }
         });
+        padding = new Rect();
+
         setHorizontalFadingEdgeEnabled(true);
         setWillNotDraw(false);
         setHorizontalScrollBarEnabled(false);
@@ -142,10 +147,8 @@ class CandidateView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int measuredWidth = resolveSize(50, widthMeasureSpec);
-        
         // Get the desired height of the icon menu view (last row of items does
         // not have a divider below)
-        Rect padding = new Rect();
         mSelectionHighlight.getPadding(padding);
         final int desiredHeight = ((int)mPaint.getTextSize()) + mVerticalPadding
                 + padding.top + padding.bottom;
@@ -246,7 +249,7 @@ class CandidateView extends View {
                         boolean typedWordValid) {
         clear();
         if (suggestions != null) {
-            mSuggestions = new ArrayList<String>(suggestions);
+            mSuggestions = new ArrayList<>(suggestions);
         }
         mTypedWordValid = typedWordValid;
         scrollTo(0, 0);

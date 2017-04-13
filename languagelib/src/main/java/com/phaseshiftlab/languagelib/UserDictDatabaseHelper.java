@@ -10,8 +10,8 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class UserDictDatabaseHelper extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "user.dict.db";
     private static final int DATABASE_VERSION = 1;
-    private SQLiteDatabase db;
-    private String pattern = "\\p{L}*";
+    private final SQLiteDatabase db;
+    private final String pattern = "\\p{L}*";
 
     public UserDictDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,8 +23,12 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
             String insertStatement = "INSERT OR IGNORE INTO user_defined_words VALUES( ? )";
             String[] sqlInsert = {word};
             Cursor c = db.rawQuery(insertStatement, sqlInsert);
+            Integer result = 0;
+            if(c.moveToFirst()) {
+                 result = c.getInt(0);
+            }
             c.close();
-            return 1;
+            return result;
         } else {
             return -1;
         }
@@ -42,6 +46,16 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
 
         c.close();
         return result;
+    }
+
+    public Cursor getWords() {
+        String selectStatement = "SELECT word FROM user_defined_words";
+        Cursor c = db.rawQuery(selectStatement, null);
+        if(c.moveToFirst()) {
+            return c;
+        } else {
+            return null;
+        }
     }
 
     public Cursor queryUserDictionary(String word) {

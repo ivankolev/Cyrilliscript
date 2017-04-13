@@ -11,8 +11,8 @@
         android:layout_width="59dp"
         android:layout_height="37dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:textOff="Save"
-        android:textOn="Save"
+        android:textOff="@string/save"
+        android:textOn="@string/save"
         android:visibility="gone"
         tools:layout_editor_absoluteY="0dp"/>
 

@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:icon="@drawable/ic_quill_icon"
         android:label="@string/ime_name"
         android:theme="@android:style/Theme.Material.NoActionBar.TranslucentDecor">
         <service
@@ -22,16 +24,21 @@
                 android:resource="@xml/method" />
         </service>
         <service android:name=".statswidget.StatsWidgetService" />
-        <receiver android:name=".statswidget.StatsWidgetProvider" >
+
+        <receiver android:name=".statswidget.StatsWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
+
         <service
             android:name=".FetchAddressIntentService"
-            android:exported="false"/>
+            android:exported="false" />
+
     </application>
 
 </manifest>
