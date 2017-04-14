@@ -18,3 +18,8 @@
 -dontwarn java.nio.file.**
 -dontwarn java.lang.invoke.**
 -dontwarn org.codehaus.mojo.animal_sniffer.**
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
