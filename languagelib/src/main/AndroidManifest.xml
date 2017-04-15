@@ -1,11 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     package="com.phaseshiftlab.languagelib">
-
     <application
         android:allowBackup="true"
         android:supportsRtl="true">
-
+        <provider
+            android:name=".SpellingProvider"
+            android:authorities="com.phaseshiftlab.languagelib.spellingprovider"
+            android:enabled="true"
+            android:exported="false" />
+        <provider
+            android:name=".UserDictionaryProvider"
+            android:authorities="com.phaseshiftlab.languagelib.userdictionaryprovider"
+            android:enabled="true"
+            android:exported="false" />
+        <provider
+            android:name=".StatisticsProvider"
+            android:authorities="com.phaseshiftlab.languagelib.statisticsprovider"
+            android:enabled="true"
+            android:exported="false" />
     </application>
-
 </manifest>

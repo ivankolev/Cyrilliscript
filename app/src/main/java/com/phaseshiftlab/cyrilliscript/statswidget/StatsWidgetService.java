@@ -5,30 +5,26 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.phaseshiftlab.cyrilliscript.R;
-import com.phaseshiftlab.languagelib.StatisticsDatabaseHelper;
-import com.phaseshiftlab.languagelib.UserDictDatabaseHelper;
+import com.phaseshiftlab.languagelib.StatisticsProvider;
+import com.phaseshiftlab.languagelib.UserDictionaryProvider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class StatsWidgetService extends Service {
     private static final String TAG = "Cyrilliscript";
     private RemoteViews remoteViews;
-    private StatisticsDatabaseHelper statisticsDb;
-    private UserDictDatabaseHelper userDictDb;
     private Intent intent;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        statisticsDb = new StatisticsDatabaseHelper(this);
-        userDictDb = new UserDictDatabaseHelper(this);
         this.intent = intent;
 
         requestStatistics();
@@ -89,21 +85,34 @@ public class StatsWidgetService extends Service {
         @Override
         protected Map<String, String> doInBackground(String... params) {
             Map<String, String> resultMap = new HashMap<>();
-            Cursor stats = statisticsDb.getTotals();
-            while (!stats.isAfterLast()) {
-                Integer totalEventsCount = stats.getInt(0);
-                Integer totalAverageConfidence = stats.getInt(1);
-                resultMap.put("totalEventsCount", "total recognition events: " + totalEventsCount);
-                resultMap.put("totalAverageConfidence", "total average confidence: " + totalAverageConfidence + "%");
-                stats.moveToNext();
+            Cursor stats = getContentResolver().query(StatisticsProvider.CONTENT_URI, null, null, null, null);
+            if(stats != null) {
+                while (!stats.isAfterLast()) {
+                    Integer totalEventsCount = stats.getInt(0);
+                    Integer totalAverageConfidence = stats.getInt(1);
+                    resultMap.put("totalEventsCount", "total recognition events: " + totalEventsCount);
+                    resultMap.put("totalAverageConfidence", "total average confidence: " + totalAverageConfidence + "%");
+                    stats.moveToNext();
+                }
+                stats.close();
             }
-            stats.close();
 
-            int userDefinedWords = userDictDb.getWordCount();
+            Uri userDefinedDictWordCountUri = Uri.withAppendedPath(UserDictionaryProvider.CONTENT_URI, "count");
+            Cursor userDefinedWordCount = getContentResolver().query(userDefinedDictWordCountUri, null, null, null, null);
+
+            int userDefinedWords = unpackWordCount(userDefinedWordCount);
 
             resultMap.put("totalUserDefinedWords", "total words saved: " + userDefinedWords);
 
             return resultMap;
+        }
+
+        private int unpackWordCount(Cursor userDefinedWordCount) {
+            if(userDefinedWordCount != null && userDefinedWordCount.moveToFirst()) {
+                return userDefinedWordCount.getInt(0);
+            } else {
+                return 0;
+            }
         }
 
         protected void onPostExecute(Map<String, String> result) {

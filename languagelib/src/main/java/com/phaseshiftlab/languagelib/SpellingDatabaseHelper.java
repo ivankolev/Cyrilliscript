@@ -6,16 +6,16 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
-public class SpellingDatabaseHelper extends SQLiteAssetHelper {
+class SpellingDatabaseHelper extends SQLiteAssetHelper {
 
     private static final String DATABASE_NAME = "bg.spelling.db";
     private static final int DATABASE_VERSION = 1;
 
-    public SpellingDatabaseHelper(Context context) {
+    SpellingDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public Cursor getWords(String inputWord) {
+    Cursor getWords(String inputWord) {
         String pattern = "\\p{L}*";
         if(inputWord.matches(pattern)) {
             SQLiteDatabase db = getReadableDatabase();

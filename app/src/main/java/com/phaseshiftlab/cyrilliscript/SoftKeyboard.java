@@ -17,11 +17,15 @@
 package com.phaseshiftlab.cyrilliscript;
 
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.text.InputType;
@@ -36,14 +40,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.phaseshiftlab.cyrilliscript.eventslib.InputSelectChangedEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.SoftKeyboardEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.UserDefinedDictionaryEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.WritingViewEvent;
-import com.phaseshiftlab.languagelib.SpellingDatabaseHelper;
-import com.phaseshiftlab.languagelib.UserDictDatabaseHelper;
+import com.phaseshiftlab.languagelib.SpellingProvider;
+import com.phaseshiftlab.languagelib.UserDictionaryProvider;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,7 +66,7 @@ import java.util.Objects;
  * be fleshed out as appropriate.
  */
 public class SoftKeyboard extends InputMethodService
-        implements KeyboardView.OnKeyboardActionListener {
+        implements KeyboardView.OnKeyboardActionListener, Loader.OnLoadCompleteListener<Cursor> {
     static final boolean DEBUG = true;
 
     /**
@@ -109,13 +114,15 @@ public class SoftKeyboard extends InputMethodService
     private MainView mMainView;
 
     private EventBus eventBus;
-    private SpellingDatabaseHelper spellingDb;
-    private UserDictDatabaseHelper userDictDb;
     private Cursor suggestedWords;
     private ArrayList<String> mSuggestionList;
     private int mCurrentInputSelect;
 
     private GoogleApiFacade mGoogleApiFacade;
+
+    private static final int LOADER_LIST = 100;
+    CursorLoader mSpellingCursorLoader;
+
 
     //region Initialization methods
 
@@ -132,9 +139,11 @@ public class SoftKeyboard extends InputMethodService
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
-        spellingDb = new SpellingDatabaseHelper(this);
-        userDictDb = new UserDictDatabaseHelper(this);
         eventBus = EventBus.getDefault();
+
+        Uri uri = Uri.withAppendedPath(SpellingProvider.CONTENT_URI, "count");
+        mSpellingCursorLoader = new CursorLoader(this, uri, null, null, null, null);
+        mSpellingCursorLoader.registerListener(LOADER_LIST, this);
     }
 
 
@@ -191,13 +200,13 @@ public class SoftKeyboard extends InputMethodService
 
     private void getSuggestedWords(String recognized) {
         Log.d(TAG, "searching the spelling db...");
-        new RequestSpellingDbTask().execute(recognized);
+        new RequestSpellingTask().execute(recognized);
     }
 
     private void getUserDefinedWords() {
         String recognizedCandidate = mComposing.toString();
         if(recognizedCandidate.length() > 0) {
-           new RequestUserDictDbTask().execute(recognizedCandidate);
+           new RequestUserDictTask().execute(recognizedCandidate);
         }
     }
 
@@ -209,6 +218,8 @@ public class SoftKeyboard extends InputMethodService
      */
     @Override
     public View onCreateInputView() {
+        mSpellingCursorLoader.startLoading();
+
         mInputView = (LatinKeyboardView) getLayoutInflater().inflate(
                 R.layout.input, null);
         mInputView.setOnKeyboardActionListener(this);
@@ -900,7 +911,10 @@ public class SoftKeyboard extends InputMethodService
 
             String pickedSuggestion = mSuggestionList.get(index);
             if(saveToUserDict.isChecked() && saveToUserDict.getVisibility() != View.GONE) {
-                Integer result = userDictDb.insertWord(pickedSuggestion);
+                //Integer result = userDictDb.insertWord(pickedSuggestion);
+                ContentValues cv = new ContentValues();
+                cv.put("word", pickedSuggestion);
+                getContentResolver().insert(UserDictionaryProvider.CONTENT_URI, cv);
             }
             getCurrentInputConnection().commitText(pickedSuggestion, pickedSuggestion.length());
             mSuggestionList.clear();
@@ -1025,6 +1039,13 @@ public class SoftKeyboard extends InputMethodService
         if(mCandidateView != null) {
             mCandidateView.setVisibility(View.GONE);
         }
+
+        // Stop the cursor loader
+        if (mSpellingCursorLoader != null) {
+            mSpellingCursorLoader.unregisterListener(this);
+            mSpellingCursorLoader.cancelLoad();
+            mSpellingCursorLoader.stopLoading();
+        }
     }
 
     @Override
@@ -1080,7 +1101,7 @@ public class SoftKeyboard extends InputMethodService
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
     }
 
-    private void offerToSaveToUserDictDb(boolean offerToSave) {
+    private void offerToSaveToUserDictionary(boolean offerToSave) {
         if(offerToSave) {
             eventBus.post(new UserDefinedDictionaryEvent(UserDefinedDictionaryEvent.SHOW));
         } else {
@@ -1104,11 +1125,20 @@ public class SoftKeyboard extends InputMethodService
         return suggestedList;
     }
 
-    private class RequestUserDictDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
+    @Override
+    public void onLoadComplete(Loader<Cursor> loader, Cursor data) {
+        if(data.moveToFirst()) {
+            Integer result = data.getInt(0);
+            Toast.makeText(getApplicationContext(), "Spelling db contains " + result + " words", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class RequestUserDictTask extends AsyncTask<String, Integer, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... params) {
             String recognized = params[0];
-            suggestedWords = userDictDb.queryUserDictionary(recognized);
+            suggestedWords = getContentResolver().query(UserDictionaryProvider.CONTENT_URI, null, recognized, null, null);
+            //suggestedWords = userDictDb.queryUserDictionary(recognized);
             return SoftKeyboard.unpackSuggestions(suggestedWords);
         }
 
@@ -1116,19 +1146,20 @@ public class SoftKeyboard extends InputMethodService
         protected void onPostExecute(ArrayList<String> result) {
             if(result.size() > 0) {
                 setSuggestions(result, true, true);
-                offerToSaveToUserDictDb(false);
+                offerToSaveToUserDictionary(false);
             } else {
-                offerToSaveToUserDictDb(true);
+                offerToSaveToUserDictionary(true);
                 updateCandidates();
             }
         }
     }
 
-    private class RequestSpellingDbTask extends AsyncTask<String, Integer, ArrayList<String>> {
+    private class RequestSpellingTask extends AsyncTask<String, Integer, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... params) {
             String recognized = params[0];
-            suggestedWords = spellingDb.getWords(recognized);
+            suggestedWords = getContentResolver().query(SpellingProvider.CONTENT_URI, null, recognized, null, null);
+//            suggestedWords = spellingDb.getWords(recognized);
             return SoftKeyboard.unpackSuggestions(suggestedWords);
         }
 
@@ -1136,7 +1167,7 @@ public class SoftKeyboard extends InputMethodService
         protected void onPostExecute(ArrayList<String> result) {
             if(result.size() > 0) {
                 setSuggestions(result, true, true);
-                offerToSaveToUserDictDb(false);
+                offerToSaveToUserDictionary(false);
             } else {//nothing from the built-in spelling db, try the user-defined words db
                 getUserDefinedWords();
             }

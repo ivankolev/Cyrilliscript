@@ -4,11 +4,11 @@ import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Debug;
@@ -25,7 +25,7 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import com.phaseshiftlab.cyrilliscript.eventslib.LanguageChangeEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
-import com.phaseshiftlab.languagelib.StatisticsDatabaseHelper;
+import com.phaseshiftlab.languagelib.StatisticsProvider;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -87,7 +87,6 @@ public class OcrService extends Service {
 
     private final Context context;
     private TessBaseAPI baseAPI;
-    private StatisticsDatabaseHelper statisticsDb;
     private final IBinder myBinder = new MyBinder();
     private static final String TAG = "Cyrilliscript";
     private static final String DATA_PATH = OcrFileUtils.getDataPath();
@@ -149,7 +148,6 @@ public class OcrService extends Service {
         setLang(TesseractFiles.BG.getLanguage());
         setLangFile(TesseractFiles.BG.getFileName());
         setLetters(Alphabets.BG_CYRILLIC.getAlphabet());
-        statisticsDb = new StatisticsDatabaseHelper(this);
     }
 
     @Override
@@ -173,21 +171,10 @@ public class OcrService extends Service {
         String recognized = baseAPI.getUTF8Text();
         int meanConfidence = baseAPI.meanConfidence();
         Log.d(TAG, "mean confidence: " + String.valueOf(meanConfidence));
-        statisticsDb.insertMeanConfidenceDataPoint(meanConfidence);
-        Cursor stats = statisticsDb.getTotals();
-
-        Integer i = 0;
-        while (!stats.isAfterLast()) {
-            Integer totalEventsCount = stats.getInt(0);
-            Integer totalAverageConfidence = stats.getInt(1);
-            Log.d(TAG, "totalEventsCount: " + totalEventsCount);
-            Log.d(TAG, "totalAverageConfidence: " + totalAverageConfidence);
-            i++;
-            stats.moveToNext();
-        }
-
-        stats.close();
-
+        //statisticsDb.insertMeanConfidenceDataPoint(meanConfidence);
+        ContentValues cv = new ContentValues();
+        cv.put("mean_confidence", meanConfidence);
+        getContentResolver().insert(StatisticsProvider.CONTENT_URI, cv);
         //dumps the thresholdImage when debugger is attached
         if (Debug.isDebuggerConnected() || Debug.waitingForDebugger()) {
             saveThresholdImage();

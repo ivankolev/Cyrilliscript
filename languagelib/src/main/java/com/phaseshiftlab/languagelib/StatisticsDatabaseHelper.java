@@ -17,6 +17,7 @@ public class StatisticsDatabaseHelper extends SQLiteAssetHelper {
     }
 
 
+    @Deprecated
     public long insertMeanConfidenceDataPoint(Integer meanConfidence) {
         String tableName = "mean_confidence_events";
         ContentValues contentValues = new ContentValues();

@@ -7,17 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 
-public class UserDictDatabaseHelper extends SQLiteAssetHelper {
+class UserDictDatabaseHelper extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "user.dict.db";
     private static final int DATABASE_VERSION = 1;
     private final SQLiteDatabase db;
     private final String pattern = "\\p{L}*";
 
-    public UserDictDatabaseHelper(Context context) {
+    UserDictDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = getWritableDatabase();
     }
 
+    @Deprecated
     public int insertWord(String word) {
         if (word.matches(pattern)) {
             String insertStatement = "INSERT OR IGNORE INTO user_defined_words VALUES( ? )";
@@ -34,6 +35,7 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
         }
     }
 
+    @Deprecated
     public int getWordCount() {
         String selectStatement = "SELECT count(word) FROM user_defined_words";
         Cursor c = db.rawQuery(selectStatement, null);
@@ -48,6 +50,7 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
         return result;
     }
 
+    @Deprecated
     public Cursor getWords() {
         String selectStatement = "SELECT word FROM user_defined_words";
         Cursor c = db.rawQuery(selectStatement, null);
@@ -58,7 +61,7 @@ public class UserDictDatabaseHelper extends SQLiteAssetHelper {
         }
     }
 
-    public Cursor queryUserDictionary(String word) {
+    Cursor queryUserDictionary(String word) {
         if (word.matches(pattern)) {
             String preparedStatement = "SELECT word FROM user_defined_words WHERE word like ? ORDER BY length(word) LIMIT 5";
             String[] sqlSelect = {word + "%"};
