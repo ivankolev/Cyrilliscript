@@ -2,7 +2,6 @@ package com.phaseshiftlab.ocrlib;
 
 import android.Manifest;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,16 +13,13 @@ import android.os.Binder;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.WriteFile;
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.phaseshiftlab.cyrilliscript.eventslib.LanguageChangeEvent;
-import com.phaseshiftlab.cyrilliscript.eventslib.LocationEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
 import com.phaseshiftlab.languagelib.StatisticsProvider;
 
@@ -220,35 +216,6 @@ public class OcrService extends Service {
         }
         baseAPI.end();
         initTesseractAPI();
-    }
-
-    @Subscribe
-    public void onLocationEvent(LocationEvent event) {
-        String countryCode = event.getMessage();
-        Log.d(TAG, "received onLocationEvent " + countryCode);
-        if (countryCode != null) {
-            tesseractFilePrefix = countryCodes.get(countryCode);
-            Log.d(TAG, "tesseractFilePrefix is " + tesseractFilePrefix);
-            boolean supportedCountry = countryCodes.containsKey(countryCode);
-            Log.d(TAG, "supportedCountry is " + supportedCountry);
-            boolean notAlreadyDownloaded = !preferences.getBoolean(tesseractFilePrefix, false);
-            Log.d(TAG, "notAlreadyDownloaded is " + notAlreadyDownloaded);
-            if (supportedCountry && notAlreadyDownloaded) {
-                android.support.v4.app.NotificationCompat.Builder mBuilder =
-                        new Builder(this)
-                                .setSmallIcon(R.drawable.ic_archive_black_24dp)
-                                .setContentTitle(getString(R.string.download_file))
-                                .setContentText(getString(R.string.suggest_download));
-                Intent resultIntent = new Intent(this, OcrService.class);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-                stackBuilder.addParentStack(PermissionRequestActivity.class);
-                stackBuilder.addNextIntent(resultIntent);
-                PendingIntent resultPendingIntent = PendingIntent.getService(context, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT);
-                mBuilder.setContentIntent(resultPendingIntent);
-                NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(mId, mBuilder.build());
-            }
-        }
     }
 
     @Override

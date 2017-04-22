@@ -118,8 +118,6 @@ public class SoftKeyboard extends InputMethodService
     private ArrayList<String> mSuggestionList;
     private int mCurrentInputSelect;
 
-    private GoogleApiFacade mGoogleApiFacade;
-
     private static final int LOADER_LIST = 100;
     CursorLoader mSpellingCursorLoader;
 
@@ -134,8 +132,6 @@ public class SoftKeyboard extends InputMethodService
     public void onCreate() {
         super.onCreate();
         getAssets();
-        mGoogleApiFacade = new GoogleApiFacade(this);
-
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
@@ -168,7 +164,6 @@ public class SoftKeyboard extends InputMethodService
         mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
         mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 
-        mGoogleApiFacade.connect();
     }
 
     @Subscribe
@@ -1029,7 +1024,6 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void onDestroy() {
         eventBus.unregister(this);
-        mGoogleApiFacade.disconnect();
         if(mDrawingInputView != null) {
             mDrawingInputView.onDetachedFromWindow();
         }
@@ -1068,14 +1062,12 @@ public class SoftKeyboard extends InputMethodService
     //main writing view buttons
     public void clearDrawingCanvas(View view) {
         Log.d(TAG, "Clear Drawing called");
-        mGoogleApiFacade.sendAnalyticsEvent("CLEAR");
         setSuggestions(null, true, true);
         eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.CLEAR));
     }
 
     public void deleteLastPath(View view) {
         Log.d(TAG, "Undo called");
-        mGoogleApiFacade.sendAnalyticsEvent("UNDO");
         eventBus.post(new SoftKeyboardEvent(SoftKeyboardEvent.UNDO));
     }
 
