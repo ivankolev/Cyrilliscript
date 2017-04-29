@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,10 +32,15 @@ public class PermissionRequestActivity extends Activity {
     private static final int SOFTKEYBOARD_PERMISSIONS = 359;
     private EventBus eventBus;
 
+    private SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.phaseshiftlab.ocrlib.R.layout.activity_soft_keyboard);
+        this.preferences = this.getApplicationContext().getSharedPreferences(TAG, MODE_PRIVATE);
+        this.preferences.edit().putBoolean("bul", false).apply();
+        this.preferences.edit().putBoolean("eng", false).apply();
 
         eventBus = EventBus.getDefault();
         eventBus.register(this);
@@ -159,6 +165,9 @@ public class PermissionRequestActivity extends Activity {
                     if(!fileExist && (Boolean) pref ) {
                         this.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, false).apply();
                         isItInstalled = "not installed";
+                    } else if(fileExist) {
+                        this.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, true).apply();
+                        isItInstalled = "installed";
                     }
                     printVal = language + ": " + isItInstalled;
                     languagesList.add(printVal);
