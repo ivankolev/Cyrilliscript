@@ -18,7 +18,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
     Context mContext;
 
     private static class ViewHolder {
-        TextView languageName;
+        TextView languageDescription;
         Button downloadButton;
     }
 
@@ -37,7 +37,9 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
 
         int i = v.getId();
         if (i == R.id.downloadLanguageButton) {
-            Log.d(TAG, "download language " + languageItem.getLanguageName());
+            String languageName = languageItem.getLanguageName();
+            Log.d(TAG, "attempt to download language data file for: " + languageName);
+            OcrLanguageSupport.downloadTesseractData(mContext, languageName);
         }
     }
 
@@ -56,7 +58,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.language_item_row, parent, false);
-            viewHolder.languageName = (TextView) convertView.findViewById(R.id.languageName);
+            viewHolder.languageDescription = (TextView) convertView.findViewById(R.id.languageDescription);
             viewHolder.downloadButton = (Button) convertView.findViewById(R.id.downloadLanguageButton);
             result = convertView;
 
@@ -67,7 +69,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
         }
 
 
-        viewHolder.languageName.setText(languageItem.getLanguageName());
+        viewHolder.languageDescription.setText(languageItem.getLanguageDescription());
         if(!languageItem.getInstalled()) {
             viewHolder.downloadButton.setTag(position);
             viewHolder.downloadButton.setOnClickListener(this);
