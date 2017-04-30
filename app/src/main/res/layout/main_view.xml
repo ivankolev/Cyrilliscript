@@ -77,16 +77,6 @@
             app:layout_constraintLeft_toRightOf="@+id/undoButton"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_constraintLeft_creator="1" />
-
-        <Spinner
-            android:id="@+id/languageSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginRight="-1dp"
-            android:background="@android:drawable/btn_default_small"
-            android:visibility="gone"
-            app:layout_constraintRight_toRightOf="parent" />
-
         <Spinner
             android:id="@+id/inputSelect"
             android:layout_width="wrap_content"
@@ -94,6 +84,14 @@
             android:background="@android:drawable/btn_default_small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/languageSelect" />
+        <Spinner
+            android:id="@+id/languageSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@android:drawable/btn_default_small"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
@@ -29,6 +28,8 @@ public class PermissionRequestActivity extends Activity {
 
     private static final String TAG = "Cyrilliscript";
     private ListView installedLanguagesList;
+    ArrayList<LanguageItem> languageItems;
+    private static LanguageItemAdapter languageItemAdapter;
     private static final int SOFTKEYBOARD_PERMISSIONS = 359;
     private EventBus eventBus;
 
@@ -52,14 +53,11 @@ public class PermissionRequestActivity extends Activity {
     private void initInstalledLanguagesList() {
         installedLanguagesList = (ListView) findViewById(com.phaseshiftlab.ocrlib.R.id.installedLanguages);
 
-        List<String> list = getLanguageListFromPrefs();
+        languageItems = getLanguageListFromPrefs();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                list);
+        languageItemAdapter = new LanguageItemAdapter(languageItems, this.getApplicationContext());
 
-        installedLanguagesList.setAdapter(arrayAdapter);
+        installedLanguagesList.setAdapter(languageItemAdapter);
     }
 
     @Override
@@ -143,10 +141,10 @@ public class PermissionRequestActivity extends Activity {
         return installedLanguages;
     }
 
-    private List<String> getLanguageListFromPrefs() {
+    private ArrayList<LanguageItem> getLanguageListFromPrefs() {
         Map<String, ?> prefs = this.getSharedPreferences(TAG, MODE_PRIVATE).getAll();
 
-        List<String> languagesList = new ArrayList<>();
+        ArrayList<LanguageItem> languagesList = new ArrayList<>();
 
         for (String key : prefs.keySet()) {
             Object pref = prefs.get(key);
@@ -165,12 +163,13 @@ public class PermissionRequestActivity extends Activity {
                     if(!fileExist && (Boolean) pref ) {
                         this.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, false).apply();
                         isItInstalled = "not installed";
+
                     } else if(fileExist) {
                         this.getSharedPreferences(TAG, MODE_PRIVATE).edit().putBoolean(key, true).apply();
                         isItInstalled = "installed";
                     }
                     printVal = language + ": " + isItInstalled;
-                    languagesList.add(printVal);
+                    languagesList.add(new LanguageItem(printVal, fileExist));
                 }
             }
             if (pref instanceof Float) {

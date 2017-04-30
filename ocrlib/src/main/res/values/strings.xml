@@ -9,4 +9,5 @@
     <string name="suggest_download">Tap to download the trained data file for your location\'s language</string>
     <string name="download_file">Download file</string>
     <string name="user_defined_dictionary">User Defined Dictionary</string>
+    <string name="download">Download</string>
 </resources>
