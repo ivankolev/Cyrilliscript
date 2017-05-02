@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements View.OnClickListener {
+public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
 
     private String TAG = "Cyrilliscript";
     private ArrayList<LanguageItem> dataSet;
@@ -20,6 +20,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
     private static class ViewHolder {
         TextView languageDescription;
         Button downloadButton;
+        Button deleteButton;
     }
 
 
@@ -28,21 +29,6 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
         this.dataSet = dataSet;
         this.mContext = mContext;
     }
-
-    @Override
-    public void onClick(View v) {
-        int position = (Integer) v.getTag();
-        Object object = getItem(position);
-        LanguageItem languageItem = (LanguageItem) object;
-
-        int i = v.getId();
-        if (i == R.id.downloadLanguageButton) {
-            String languageName = languageItem.getLanguageName();
-            Log.d(TAG, "attempt to download language data file for: " + languageName);
-            OcrLanguageSupport.downloadTesseractData(mContext, languageName);
-        }
-    }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -60,6 +46,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
             convertView = inflater.inflate(R.layout.language_item_row, parent, false);
             viewHolder.languageDescription = (TextView) convertView.findViewById(R.id.languageDescription);
             viewHolder.downloadButton = (Button) convertView.findViewById(R.id.downloadLanguageButton);
+            viewHolder.deleteButton = (Button) convertView.findViewById(R.id.deleteLanguageButton);
             result = convertView;
 
             convertView.setTag(viewHolder);
@@ -71,13 +58,52 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> implements V
 
         viewHolder.languageDescription.setText(languageItem.getLanguageDescription());
         if(!languageItem.getInstalled()) {
-            viewHolder.downloadButton.setTag(position);
-            viewHolder.downloadButton.setOnClickListener(this);
+            createDownloadClickListener(position, viewHolder);
         } else {
-            viewHolder.downloadButton.setVisibility(View.GONE);
+            createDeleteClickListener(position, viewHolder);
         }
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    private void createDownloadClickListener(int position, ViewHolder viewHolder) {
+        viewHolder.deleteButton.setVisibility(View.GONE);
+        viewHolder.downloadButton.setTag(position);
+        viewHolder.downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (Integer) v.getTag();
+                Object object = getItem(position);
+                LanguageItem languageItem = (LanguageItem) object;
+
+                int i = v.getId();
+                if (i == R.id.downloadLanguageButton) {
+                    String languageName = languageItem.getLanguageName();
+                    Log.d(TAG, "attempt to download language data file for: " + languageName);
+                    OcrLanguageSupport.downloadTesseractData(mContext, languageName);
+                }
+            }
+        });
+    }
+
+    private void createDeleteClickListener(int position, ViewHolder viewHolder) {
+        viewHolder.downloadButton.setVisibility(View.GONE);
+        viewHolder.deleteButton.setTag(position);
+        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (Integer) v.getTag();
+                Object object = getItem(position);
+                LanguageItem languageItem = (LanguageItem) object;
+
+                int i = v.getId();
+                if (i == R.id.deleteLanguageButton) {
+                    String languageName = languageItem.getLanguageName();
+                    Log.d(TAG, "attempt to delete language data file for: " + languageName);
+                    //actually delete it here
+                }
+            }
+        });
     }
 }

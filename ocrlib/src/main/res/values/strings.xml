@@ -10,4 +10,5 @@
     <string name="download_file">Download file</string>
     <string name="user_defined_dictionary">User Defined Dictionary</string>
     <string name="download">Download</string>
+    <string name="delete">Delete</string>
 </resources>
