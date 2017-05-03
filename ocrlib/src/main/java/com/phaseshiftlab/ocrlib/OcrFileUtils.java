@@ -67,6 +67,17 @@ class OcrFileUtils {
         return (new File(getTessdataPath() + langFile)).exists();
     }
 
+    public static File[] listLanguageFiles() {
+        File directory = new File(getTessdataPath());
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++)
+        {
+            Log.d("Files", "FileName:" + files[i].getName());
+        }
+        return files;
+    }
+
 
     private static void copyTrainedDataFile(Context context, String langFile) throws IOException {
         InputStream in = context.getAssets().open("tessdata/" + langFile);

@@ -101,6 +101,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
                 if (i == R.id.deleteLanguageButton) {
                     String languageName = languageItem.getLanguageName();
                     Log.d(TAG, "attempt to delete language data file for: " + languageName);
+                    OcrFileUtils.listLanguageFiles();
                     //actually delete it here
                 }
             }
