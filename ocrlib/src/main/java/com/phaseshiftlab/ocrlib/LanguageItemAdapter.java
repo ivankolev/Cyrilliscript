@@ -69,6 +69,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
 
     private void createDownloadClickListener(int position, ViewHolder viewHolder) {
         viewHolder.deleteButton.setVisibility(View.GONE);
+        viewHolder.downloadButton.setVisibility(View.VISIBLE);
         viewHolder.downloadButton.setTag(position);
         viewHolder.downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,8 +88,9 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
         });
     }
 
-    private void createDeleteClickListener(int position, ViewHolder viewHolder) {
+    private void createDeleteClickListener(int position, final ViewHolder viewHolder) {
         viewHolder.downloadButton.setVisibility(View.GONE);
+        viewHolder.deleteButton.setVisibility(View.VISIBLE);
         viewHolder.deleteButton.setTag(position);
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +105,11 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
                     Log.d(TAG, "attempt to delete language data file for: " + languageName);
                     OcrFileUtils.listLanguageFiles();
                     //actually delete it here
+                    if(OcrFileUtils.deleteLanguageFile(languageName)) {
+                        languageItem.setLanguageDescription(languageItem.getLanguageFullName() + ": not installed");
+                        createDownloadClickListener(position, viewHolder);
+                        notifyDataSetChanged();
+                    }
                 }
             }
         });

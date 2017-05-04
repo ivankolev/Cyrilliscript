@@ -169,7 +169,7 @@ public class PermissionRequestActivity extends Activity {
                         isItInstalled = "installed";
                     }
                     printVal = language + ": " + isItInstalled;
-                    languagesList.add(new LanguageItem(key, printVal, fileExist));
+                    languagesList.add(new LanguageItem(key, language, printVal, fileExist));
                 }
             }
             if (pref instanceof Float) {

@@ -70,14 +70,17 @@ class OcrFileUtils {
     public static File[] listLanguageFiles() {
         File directory = new File(getTessdataPath());
         File[] files = directory.listFiles();
-        Log.d("Files", "Size: "+ files.length);
-        for (int i = 0; i < files.length; i++)
-        {
-            Log.d("Files", "FileName:" + files[i].getName());
+        Log.d("Files", "Size: " + files.length);
+        for (File file : files) {
+            Log.d("Files", "FileName:" + file.getName());
         }
         return files;
     }
 
+    public static boolean deleteLanguageFile(String language) {
+        File toDelete = new File(getTessdataPath() + "/" + language + ".traineddata");
+        return toDelete.exists() && toDelete.delete();
+    }
 
     private static void copyTrainedDataFile(Context context, String langFile) throws IOException {
         InputStream in = context.getAssets().open("tessdata/" + langFile);
@@ -91,7 +94,6 @@ class OcrFileUtils {
         in.close();
         out.close();
     }
-
 
 
     public static boolean writeResponseBodyToDisk(ResponseBody body, String tesseractFile) {
