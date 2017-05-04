@@ -104,6 +104,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
                     String languageName = languageItem.getLanguageName();
                     Log.d(TAG, "attempt to delete language data file for: " + languageName);
                     OcrFileUtils.listLanguageFiles();
+                    //actually delete it here
                     if(OcrFileUtils.deleteLanguageFile(languageName)) {
                         languageItem.setLanguageDescription(languageItem.getLanguageFullName() + ": not installed");
                         createDownloadClickListener(position, viewHolder);
