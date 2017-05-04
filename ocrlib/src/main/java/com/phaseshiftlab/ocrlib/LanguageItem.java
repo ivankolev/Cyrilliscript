@@ -2,11 +2,13 @@ package com.phaseshiftlab.ocrlib;
 
 public class LanguageItem {
     private String languageName;
+    private String languageFullName;
     private String languageDescription;
     private Boolean isInstalled;
 
-    public LanguageItem(String languageName, String languageDescription, Boolean isInstalled) {
+    public LanguageItem(String languageName, String languageFullName, String languageDescription, Boolean isInstalled) {
         this.languageName = languageName;
+        this.languageFullName = languageFullName;
         this.languageDescription = languageDescription;
         this.isInstalled = isInstalled;
     }
@@ -33,5 +35,13 @@ public class LanguageItem {
 
     public void setLanguageDescription(String languageDescription) {
         this.languageDescription = languageDescription;
+    }
+
+    public String getLanguageFullName() {
+        return languageFullName;
+    }
+
+    public void setLanguageFullName(String languageFullName) {
+        this.languageFullName = languageFullName;
     }
 }
