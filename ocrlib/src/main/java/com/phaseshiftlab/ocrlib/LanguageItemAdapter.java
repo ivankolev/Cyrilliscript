@@ -56,15 +56,17 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
         }
 
 
-        viewHolder.languageDescription.setText(languageItem.getLanguageDescription());
-        if(!languageItem.getInstalled()) {
-            createDownloadClickListener(position, viewHolder);
-        } else {
-            createDeleteClickListener(position, viewHolder);
+        if(languageItem != null) {
+            viewHolder.languageDescription.setText(languageItem.getLanguageDescription());
+            if(!languageItem.getInstalled()) {
+                createDownloadClickListener(position, viewHolder);
+            } else {
+                createDeleteClickListener(position, viewHolder);
+            }
         }
 
         // Return the completed view to render on screen
-        return convertView;
+        return result;
     }
 
     private void createDownloadClickListener(int position, ViewHolder viewHolder) {
@@ -79,7 +81,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
                 LanguageItem languageItem = (LanguageItem) object;
 
                 int i = v.getId();
-                if (i == R.id.downloadLanguageButton) {
+                if (i == R.id.downloadLanguageButton && languageItem != null) {
                     String languageName = languageItem.getLanguageName();
                     Log.d(TAG, "attempt to download language data file for: " + languageName);
                     OcrLanguageSupport.downloadTesseractData(mContext, languageName);
@@ -100,7 +102,7 @@ public class LanguageItemAdapter extends ArrayAdapter<LanguageItem> {
                 LanguageItem languageItem = (LanguageItem) object;
 
                 int i = v.getId();
-                if (i == R.id.deleteLanguageButton) {
+                if (i == R.id.deleteLanguageButton && languageItem != null) {
                     String languageName = languageItem.getLanguageName();
                     Log.d(TAG, "attempt to delete language data file for: " + languageName);
                     OcrFileUtils.listLanguageFiles();
