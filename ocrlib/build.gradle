@@ -22,15 +22,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.3-alpha', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.3-alpha', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.rmtheis:tess-two:6.3.0'
-    testCompile 'junit:junit:4.12'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile project(path: ':eventslib')
-    compile project(path: ':languagelib')
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.rmtheis:tess-two:6.3.0'
+    testImplementation 'junit:junit:4.12'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation project(path: ':eventslib')
+    implementation project(path: ':languagelib')
 }

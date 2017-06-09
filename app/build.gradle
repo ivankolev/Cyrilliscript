@@ -32,14 +32,14 @@ android {
 }
 
 dependencies {
-    compile project(path: ':ocrlib')
-    compile project(path: ':languagelib')
-    compile project(path: ':eventslib')
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation project(path: ':ocrlib')
+    implementation project(path: ':languagelib')
+    implementation project(path: ':eventslib')
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.android.support:support-vector-drawable:25.3.1'
+    implementation 'com.android.support:support-v4:25.4.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.android.support:support-vector-drawable:25.4.0'
 }
