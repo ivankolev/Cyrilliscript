@@ -43,4 +43,5 @@ captures/
 /.idea/
 /app/build/
 /app/app.iml
-!/cyrilliscript.jks
+/keystore.properties
+/cyrilliscript.jks
