@@ -45,11 +45,11 @@ dependencies {
     implementation project(path: ':ocrlib')
     implementation project(path: ':languagelib')
     implementation project(path: ':eventslib')
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.android.support:support-vector-drawable:26.1.0'
 }
