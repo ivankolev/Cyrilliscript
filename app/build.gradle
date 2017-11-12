@@ -19,7 +19,7 @@ android {
         }
     }
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '26.0.3'
     defaultConfig {
         applicationId "com.phaseshiftlab.cyrilliscript"
         minSdkVersion 23
@@ -36,8 +36,8 @@ android {
     productFlavors {
     }
     compileOptions {
-        targetCompatibility 1.7
-        sourceCompatibility 1.7
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 }
 
