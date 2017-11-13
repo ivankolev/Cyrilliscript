@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.facebook.stetho.Stetho;
 import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 import com.phaseshiftlab.cyrilliscript.eventslib.PermissionEvent;
+import com.phaseshiftlab.languagelib.UserDictionaryActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +40,8 @@ public class PermissionRequestActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
+
         setContentView(com.phaseshiftlab.ocrlib.R.layout.activity_soft_keyboard);
         this.preferences = this.getApplicationContext().getSharedPreferences(TAG, MODE_PRIVATE);
         this.preferences.edit().putBoolean("bul", false).apply();
@@ -193,5 +197,10 @@ public class PermissionRequestActivity extends Activity {
         }
 
         return languagesList;
+    }
+
+    public void launchUserDictActivity(View view) {
+        Intent intent = new Intent(this, UserDictionaryActivity.class);
+        startActivity(intent);
     }
 }

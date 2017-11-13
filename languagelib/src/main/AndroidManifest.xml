@@ -3,7 +3,8 @@
     package="com.phaseshiftlab.languagelib">
     <application
         android:allowBackup="true"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.Material.NoActionBar.TranslucentDecor">
         <provider
             android:name=".SpellingProvider"
             android:authorities="com.phaseshiftlab.languagelib.spellingprovider"
@@ -19,5 +20,6 @@
             android:authorities="com.phaseshiftlab.languagelib.statisticsprovider"
             android:enabled="true"
             android:exported="false" />
+        <activity android:name=".UserDictionaryActivity" />
     </application>
 </manifest>
