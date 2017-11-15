@@ -1,5 +1,6 @@
 package com.phaseshiftlab.cyrilliscript;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
 import android.location.Address;
@@ -92,6 +93,7 @@ public class FetchAddressIntentService extends IntentService {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void deliverResultToReceiver(int resultCode, HashMap<String, String> message) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.RESULT_DATA_KEY, message);

@@ -4,7 +4,8 @@
     android:id="@+id/main_view"
     style="@style/MainViewStyle"
     tools:layout_editor_absoluteY="0dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
+    tools:context=".SoftKeyboard">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/buttonRow"
@@ -22,6 +23,7 @@
             android:textOff="@string/save"
             android:textOn="@string/save"
             android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             tools:layout_editor_absoluteY="0dp" />
 
