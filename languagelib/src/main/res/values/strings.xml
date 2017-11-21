@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">languagelib</string>
+    <string name="delete_selected">Delete</string>
 </resources>

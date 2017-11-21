@@ -6,22 +6,23 @@ import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.dictionary_activity.*
+import kotlinx.android.synthetic.main.dictionary_activity.view.*
 import kotlinx.android.synthetic.main.dictionary_entry.view.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
-import org.jetbrains.anko.db.classParser
-import org.jetbrains.anko.db.parseList
-import org.jetbrains.anko.db.select
+import org.jetbrains.anko.db.*
 
 
 class UserDictionaryActivity: Activity() {
-    lateinit var userDefinedWords: List<Word>;
+    var selectedWords: HashMap<String, Int> = HashMap()
+
+    private lateinit var userDefinedWords: List<Word>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userDefinedWords = database.use {
@@ -30,11 +31,27 @@ class UserDictionaryActivity: Activity() {
         setContentView(R.layout.dictionary_activity)
         dictionaryList.layoutManager = LinearLayoutManager(this)
         dictionaryList.setHasFixedSize(true)
-        dictionaryList.adapter = DictionaryAdapter(userDefinedWords)
+
+        dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
+    }
+
+    fun deleteSelected(view: View) {
+        Log.d("UserDictionaryActivity", "deleteSelected")
+        for(word in this.selectedWords.keys) {
+            database.use {
+                delete(Word.TABLE_NAME, "${Word.COLUMN_WORD} = {matchingWord}", "matchingWord" to word)
+            }
+            Log.d("UserDictionaryActivity", word + " deleted from Db")
+            selectedWords.remove(word)
+            userDefinedWords = database.use {
+                select(Word.TABLE_NAME).exec { parseList(classParser()) }
+            }
+        }
+        dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
     }
 }
 
-class DictionaryAdapter(var userDefinedWordsList: List<Word>) : RecyclerView.Adapter<DictionaryAdapter.ViewHolder>() {
+class DictionaryAdapter(private var userDefinedWordsList: List<Word>, private var selectedWords: HashMap<String, Int>) : RecyclerView.Adapter<DictionaryAdapter.ViewHolder>() {
     override fun getItemCount(): Int {
         return userDefinedWordsList.size
     }
@@ -47,15 +64,18 @@ class DictionaryAdapter(var userDefinedWordsList: List<Word>) : RecyclerView.Ada
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.dictionary_entry, parent, false)
 
         view.dictionaryWord.setCheckMarkDrawable(0)
-        view.dictionaryWord.setOnClickListener { doSomething(view.dictionaryWord) }
+        view.dictionaryWord.setOnClickListener { selectWord(view.dictionaryWord) }
         return ViewHolder(view)
     }
 
-    private fun doSomething(view: CheckedTextView) {
+    private fun selectWord(view: CheckedTextView) {
         view.isChecked = !view.isChecked
         if(view.isChecked) {
+            view.context
+            selectedWords.put(view.text.toString(), 1)
             view.setCheckMarkDrawable(R.drawable.ic_check_circle)
         } else {
+            selectedWords.remove(view.text.toString())
             view.dictionaryWord.setCheckMarkDrawable(0)
         }
     }
