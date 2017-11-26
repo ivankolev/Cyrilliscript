@@ -25,6 +25,8 @@ android {
         minSdkVersion 23
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        versionCode 1
+        versionName "1.0"
     }
     buildTypes {
         release {
@@ -39,6 +41,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 
 }
 
@@ -46,9 +53,7 @@ dependencies {
     implementation project(path: ':ocrlib')
     implementation project(path: ':languagelib')
     implementation project(path: ':eventslib')
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+    testImplementation "org.robolectric:robolectric:3.5.1"
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'org.greenrobot:eventbus:3.0.0'
