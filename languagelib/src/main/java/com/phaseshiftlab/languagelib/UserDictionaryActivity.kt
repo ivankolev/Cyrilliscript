@@ -18,20 +18,26 @@ import kotlinx.android.synthetic.main.dictionary_entry.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.db.*
 
-
+class MyRowParser : RowParser<Word> {
+    override fun parseRow(columns: Array<Any?>): Word {
+        Log.d("MyRowParser", "parsing...")
+        return Word(columns[0] as String)
+    }
+}
 class UserDictionaryActivity: Activity() {
     var selectedWords: HashMap<String, Int> = HashMap()
 
     private lateinit var userDefinedWords: List<Word>
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("UserDictionaryActivity", "onCreate")
         super.onCreate(savedInstanceState)
         userDefinedWords = database.use {
-            select(Word.TABLE_NAME).exec { parseList(classParser()) }
+            select(Word.TABLE_NAME).exec { parseList(MyRowParser()) }
         }
         setContentView(R.layout.dictionary_activity)
         dictionaryList.layoutManager = LinearLayoutManager(this)
         dictionaryList.setHasFixedSize(true)
-
+        Log.d("UserDictionaryActivity", "bind to adapter")
         dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
     }
 
@@ -44,7 +50,7 @@ class UserDictionaryActivity: Activity() {
             Log.d("UserDictionaryActivity", word + " deleted from Db")
             selectedWords.remove(word)
             userDefinedWords = database.use {
-                select(Word.TABLE_NAME).exec { parseList(classParser()) }
+                select(Word.TABLE_NAME).exec { parseList(MyRowParser()) }
             }
         }
         dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
@@ -57,6 +63,7 @@ class DictionaryAdapter(private var userDefinedWordsList: List<Word>, private va
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d("DictionaryAdapter", "onBindViewHolder")
         holder.dictionaryWordEntry.text = userDefinedWordsList[position].word
     }
 
@@ -65,6 +72,7 @@ class DictionaryAdapter(private var userDefinedWordsList: List<Word>, private va
 
         view.dictionaryWord.setCheckMarkDrawable(0)
         view.dictionaryWord.setOnClickListener { selectWord(view.dictionaryWord) }
+        Log.d("DictionaryAdapter", "onCreateViewHolder")
         return ViewHolder(view)
     }
 
@@ -96,6 +104,7 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "user.dict.db") {
 
         @Synchronized
         fun getInstance(ctx: Context): MySqlHelper {
+            Log.d("MySqlHelper" , "companion object, getInstance")
             if (instance == null) {
                 instance = MySqlHelper(ctx.applicationContext)
             }
@@ -114,7 +123,7 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "user.dict.db") {
 data class Word(val word: String) {
     companion object {
         val TABLE_NAME = "user_defined_words"
-        val COLUMN_WORDID = "wordid"
+
         val COLUMN_WORD = "word"
     }
 }
