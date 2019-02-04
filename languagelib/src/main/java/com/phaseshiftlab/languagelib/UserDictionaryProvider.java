@@ -6,7 +6,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 public class UserDictionaryProvider extends ContentProvider {
     public static final Uri CONTENT_URI =

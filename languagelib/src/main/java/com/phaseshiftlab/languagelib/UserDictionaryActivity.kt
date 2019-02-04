@@ -4,16 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.dictionary_activity.*
-import kotlinx.android.synthetic.main.dictionary_activity.view.*
 import kotlinx.android.synthetic.main.dictionary_entry.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.db.*
@@ -41,7 +40,7 @@ class UserDictionaryActivity: Activity() {
         dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
     }
 
-    fun deleteSelected(view: View) {
+    fun deleteSelected() {
         Log.d("UserDictionaryActivity", "deleteSelected")
         for(word in this.selectedWords.keys) {
             database.use {

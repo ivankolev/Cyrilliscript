@@ -97,7 +97,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.phaseshiftlab.cyrilliscript.MainWritingView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.phaseshiftlab.cyrilliscript.MainWritingView 
         android:id="@+id/drawing_input_view"
         android:layout_width="0dp"
         android:layout_height="180dp"

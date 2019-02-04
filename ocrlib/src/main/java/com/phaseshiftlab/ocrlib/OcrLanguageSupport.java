@@ -4,8 +4,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
 
 import com.phaseshiftlab.cyrilliscript.eventslib.DownloadSuccessEvent;
 
@@ -44,7 +45,7 @@ public class OcrLanguageSupport {
 
                             Log.d(TAG, "file download was a success? " + writtenToDisk);
                             if(writtenToDisk) {
-                                android.support.v4.app.NotificationCompat.Builder mBuilder =
+                                NotificationCompat.Builder mBuilder =
                                         new NotificationCompat.Builder(context)
                                                 .setSmallIcon(R.drawable.ic_check_box_black_24dp)
                                                 .setContentTitle("Download success")

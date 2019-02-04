@@ -13,8 +13,9 @@ import android.os.Binder;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.WriteFile;
