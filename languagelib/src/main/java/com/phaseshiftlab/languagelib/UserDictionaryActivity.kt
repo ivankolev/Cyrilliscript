@@ -23,7 +23,8 @@ class MyRowParser : RowParser<Word> {
         return Word(columns[0] as String)
     }
 }
-class UserDictionaryActivity: Activity() {
+
+class UserDictionaryActivity : Activity() {
     var selectedWords: HashMap<String, Int> = HashMap()
 
     private lateinit var userDefinedWords: List<Word>
@@ -38,21 +39,21 @@ class UserDictionaryActivity: Activity() {
         dictionaryList.setHasFixedSize(true)
         Log.d("UserDictionaryActivity", "bind to adapter")
         dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
-    }
 
-    fun deleteSelected() {
-        Log.d("UserDictionaryActivity", "deleteSelected")
-        for(word in this.selectedWords.keys) {
-            database.use {
-                delete(Word.TABLE_NAME, "${Word.COLUMN_WORD} = {matchingWord}", "matchingWord" to word)
+        deleteButton.setOnClickListener {
+            Log.d("UserDictionaryActivity", "deleteSelected")
+            for (word in this.selectedWords.keys) {
+                database.use {
+                    delete(Word.TABLE_NAME, "${Word.COLUMN_WORD} = {matchingWord}", "matchingWord" to word)
+                }
+                Log.d("UserDictionaryActivity", word + " deleted from Db")
+                selectedWords.remove(word)
+                userDefinedWords = database.use {
+                    select(Word.TABLE_NAME).exec { parseList(MyRowParser()) }
+                }
             }
-            Log.d("UserDictionaryActivity", word + " deleted from Db")
-            selectedWords.remove(word)
-            userDefinedWords = database.use {
-                select(Word.TABLE_NAME).exec { parseList(MyRowParser()) }
-            }
+            dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
         }
-        dictionaryList.adapter = DictionaryAdapter(userDefinedWords, selectedWords)
     }
 }
 
@@ -77,7 +78,7 @@ class DictionaryAdapter(private var userDefinedWordsList: List<Word>, private va
 
     private fun selectWord(view: CheckedTextView) {
         view.isChecked = !view.isChecked
-        if(view.isChecked) {
+        if (view.isChecked) {
             view.context
             selectedWords.put(view.text.toString(), 1)
             view.setCheckMarkDrawable(R.drawable.ic_check_circle)
@@ -87,11 +88,9 @@ class DictionaryAdapter(private var userDefinedWordsList: List<Word>, private va
         }
     }
 
-    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val dictionaryWordEntry: TextView = view.find(R.id.dictionaryWord)
-        init {
-
-        }
+        init { }
     }
 
 }
@@ -103,7 +102,7 @@ class MySqlHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "user.dict.db") {
 
         @Synchronized
         fun getInstance(ctx: Context): MySqlHelper {
-            Log.d("MySqlHelper" , "companion object, getInstance")
+            Log.d("MySqlHelper", "companion object, getInstance")
             if (instance == null) {
                 instance = MySqlHelper(ctx.applicationContext)
             }
